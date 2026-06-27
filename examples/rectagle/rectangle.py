@@ -26,7 +26,7 @@ def update_rectangle(event):
 
 # When the mouse is released
 def include_rectangle(event):
-    retangulos.append((ini_x, ini_y, fim_x, fim_y))
+    rectangles.append((ini_x, ini_y, fim_x, fim_y))
 
 def draw():
     canvas.delete("all")
