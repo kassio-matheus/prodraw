@@ -7,6 +7,7 @@ from examples.circle import Circle
 
 
 def setup(root):
+    figuras = []
     canvas = Canvas(root, bg='black', highlightthickness=0,
                     relief="flat", borderwidth=0)
 
