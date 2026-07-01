@@ -137,7 +137,7 @@ celerybeat.pid
 *.aof
 *.pid
 
-src/screen.py
+screen.py
 
 # RabbitMQ
 mnesia/
