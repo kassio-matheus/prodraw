@@ -1,15 +1,14 @@
 from tkinter import *
 from tkinter import ttk
 
-from examples.rectagle import Rectangle
-from examples.ovals import Oval
-from examples.circle import Circle
-from examples.freeHand import FreeHand
-from examples.lines import Lines
+from shapes.rectagle import create_rectangle
+from shapes.ovals import Oval
+from shapes.circle import Circle
+from shapes.freeHand import FreeHand
+from shapes.lines import Lines
 
 # todas as figuras sao guardadas aqui
 figures = []
-
 
 # faz o setup da tela
 def setup(root):
@@ -128,7 +127,7 @@ def setup(root):
 
     draw_tools = {
         'Desenhar um:': None,
-        'Quadrado': Rectangle,
+        'Quadrado': create_rectangle,
         'Círculo': Circle,
         'Oval': Oval,
         'Linha':Lines,
