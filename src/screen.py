@@ -1,7 +1,7 @@
 from tkinter import *
 from abc import ABC, abstractmethod
 
-#Faz a configuração da tela
+# Faz a configuração da tela
 
 
 class Screen(ABC):
