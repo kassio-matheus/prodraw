@@ -7,14 +7,19 @@ from examples.circle import Circle
 from examples.freeHand import FreeHand
 from examples.lines import Lines
 
+# todas as figuras sao guardadas aqui
 figures = []
 
+
+# faz o setup da tela
 def setup(root):
     canvas = Canvas(root, bg='#101010', highlightthickness=0,
                     relief="flat", borderwidth=0)
 
     canvas.pack(fill="both", expand=True)
 
+
+    # cria o texto da versão
     def create_text_version():
         version = "1.0.0"
         canvas.create_text(
@@ -26,6 +31,7 @@ def setup(root):
             tags="version_text"
         )
 
+    # cria o grid
     def create_grids(event=None):
         canvas.delete("grids")
         canvas.delete("version_text")
@@ -65,6 +71,7 @@ def setup(root):
     canvas_by_color = {}
     selected_color_var = StringVar(value=COLORS[0][0])  # "#FFFFFF"
 
+    # faz o painel de selecao de cor
     def select_color(color):
         previous = selected_color_var.get()
 
@@ -74,7 +81,7 @@ def setup(root):
         canvas_by_color[color].config(bg=SELECTED_BG)
         selected_color_var.set(color)
 
-
+    #cria os botoes de cor 
     def create_color_button(panel, row, column, color):
         cv = Canvas(
             panel, width=BUTTON_SIZE, height=BUTTON_SIZE,
@@ -90,6 +97,7 @@ def setup(root):
         if color == selected_color_var.get():
             cv.config(bg=SELECTED_BG) 
 
+    # cria o color picker
     def create_color_picker(canvas):
         panel = Frame(canvas, bg=PANEL_BG, padx=12, pady=12)
 
@@ -103,6 +111,8 @@ def setup(root):
     create_color_picker(canvas)
     select_color("#FFFFFF")
 
+
+# delete all draws in the screen
     def delete_all_draws():
         canvas.delete("rectangle")
         canvas.delete("oval")
@@ -125,6 +135,8 @@ def setup(root):
         'Mao Livre': FreeHand
     }
 
+
+    # botao de selecao
     def select_option_tool(option):
         draw_tools[option](canvas, bg=selected_color_var, figures = figures)
 

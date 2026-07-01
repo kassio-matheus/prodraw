@@ -1,5 +1,7 @@
 from tkinter import *
 
+
+#Cria o retangulo com bordas (depois fazer isso)
 def create_round_rectangle(canvas: Canvas, x1, y1, x2, y2, radius, **kwargs):    
     points = [x1+radius, y1,
               x1+radius, y1,

@@ -21,6 +21,7 @@ IGNORED_DIRS = {".git", "__pycache__", "venv", ".venv", "env", "node_modules"}
 IS_MAC = sys.platform == "darwin"
 
 
+# carrega o estado da tela
 def load_state():
     try:
         with open(STATE_FILE, "r") as f:
@@ -28,7 +29,7 @@ def load_state():
     except Exception:
         return {"fullscreen": True}
 
-
+# salva o estado da tela
 def save_state(state):
     try:
         with open(STATE_FILE, "w") as f:
@@ -74,12 +75,12 @@ root = tk.Tk()
 root.title("ProDraw")
 root.attributes("-fullscreen", state.get("fullscreen", True))
 
-
+# faz o full screen
 def toggle_fullscreen(event=None):
     is_fullscreen = not root.attributes("-fullscreen")
     root.attributes("-fullscreen", is_fullscreen)
 
-
+# fecha a janela
 def exit_fullscreen(event=None):
     root.attributes("-fullscreen", False)
 
