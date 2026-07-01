@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import ttk
 
 from shapes.rectagle import create_rectangle
-from shapes.ovals import Oval
+from shapes.oval import create_oval
 from shapes.circle import Circle
 from shapes.freeHand import FreeHand
 from shapes.lines import Lines
@@ -129,7 +129,7 @@ def setup(root):
         'Desenhar um:': None,
         'Quadrado': create_rectangle,
         'Círculo': Circle,
-        'Oval': Oval,
+        'Oval': create_oval,
         'Linha':Lines,
         'Mao Livre': FreeHand
     }
@@ -137,7 +137,7 @@ def setup(root):
 
     # botao de selecao
     def select_option_tool(option):
-        draw_tools[option](canvas, bg=selected_color_var, figures = figures)
+        draw_tools[option](canvas = canvas, bg=selected_color_var, figures = figures)
 
     menu_selected_option = StringVar()
     menu_selected_option.set(next(iter(draw_tools)))

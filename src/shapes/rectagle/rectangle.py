@@ -1,7 +1,6 @@
 from tkinter import *
 
 from src.shapes.shape import Shape
-
 from .rounded import create_round_rectangle
 
 from src.shapes.colors import SHAPE_COLORS
