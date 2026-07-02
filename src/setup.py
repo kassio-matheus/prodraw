@@ -4,7 +4,7 @@ from tkinter import ttk
 from shapes.rectagle import create_rectangle
 from shapes.oval import create_oval
 from shapes.circle import create_circle
-from shapes.freehand import create_freehand
+from shapes.freeHand import create_freehand
 from shapes.line import create_line
 
 # All figures

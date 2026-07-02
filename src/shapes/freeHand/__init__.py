@@ -1,2 +1,2 @@
-from .freehand import FreeHand
-from .freehand import create_freehand
+from .freeHand import FreeHand
+from .freeHand import create_freehand
