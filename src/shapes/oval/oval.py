@@ -2,7 +2,9 @@ from tkinter import *
 
 from src.shapes.shape import Shape
 from src.shapes.colors import SHAPE_COLORS
+from dataclasses import *
 
+@dataclass
 class Oval(Shape):
     
     def bind (self, start, update, add):

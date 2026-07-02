@@ -3,6 +3,7 @@ from tkinter import ttk
 
 from src.shapes.rectagle.use_rectangle import use_rectangle
 from shapes.line.use_line import use_line
+from shapes.oval.use_oval import use_oval
 
 
 
@@ -133,7 +134,7 @@ def setup(root):
         'Desenhar um:': None,
         'Quadrado': use_rectangle,
         #'Círculo': create_circle,
-        #'Oval': create_oval,
+        'Oval': use_oval,
         'Linha': use_line,
         #'Mão livre': create_freehand
     }
