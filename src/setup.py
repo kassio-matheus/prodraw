@@ -24,10 +24,10 @@ def setup(root):
     def create_text_version():
         version = "1.0.0"
         version_label = Label(
-            canvas,  # o mesmo parent do canvas (frame/janela)
+            canvas,
             text=f"ProDraw @{version}",
             fg="#3F3F3F",
-            bg="#101010",  # ou a cor de fundo do seu canvas, se quiser "transparência" visual
+            bg="#101010",
             font=("Helvetica", 12, "bold")
         )
         version_label.place(relx=0, rely=1, x=30, y=-30, anchor="sw")
@@ -40,8 +40,10 @@ def setup(root):
         width = canvas.winfo_width()
         height = canvas.winfo_height()
 
+        print(factor_zoom)
+
         # Adjust by zoom - Waiting for implement
-        GRID_SIZE = 20
+        GRID_SIZE = 50
 
         for x in range(0, width, GRID_SIZE):
             for y in range(0, height, GRID_SIZE):
@@ -113,8 +115,7 @@ def setup(root):
     create_color_picker(canvas)
     select_color("#FFFFFF")
 
-
-# delete all draws in the screen
+    # delete all draws in the screen
 
     def delete_all_draws():
         canvas.delete("rectangle")
@@ -153,3 +154,31 @@ def setup(root):
     menu_tools.config(width=20)
 
     menu_tools.pack(side="bottom", anchor="se", padx=30, pady=10, expand=False)
+
+    factor_zoom = 1.0
+    ZOOM_STEP = 0.1
+    ZOOM_MIN = 0.1
+    ZOOM_MAX = 2
+
+    def zoom(event):
+        nonlocal factor_zoom
+
+        x = canvas.canvasx(event.x)
+        y = canvas.canvasy(event.y)
+
+        if event.delta > 0:
+            new_factor = min(round(factor_zoom + ZOOM_STEP, 1), ZOOM_MAX)
+        else:
+            new_factor = max(round(factor_zoom - ZOOM_STEP, 1), ZOOM_MIN)
+
+        if new_factor == factor_zoom:
+            return  # já está no limite, não faz nada
+
+        # fator RELATIVO em relação ao estado atual do canvas
+        scale_step = new_factor / factor_zoom
+        canvas.scale("shape", x, y, scale_step, scale_step)
+        # schedule_grid_update()
+
+        factor_zoom = new_factor
+
+    canvas.bind("<MouseWheel>", zoom)
