@@ -4,7 +4,8 @@ from tkinter import ttk
 from src.shapes.rectagle.use_rectangle import use_rectangle
 from shapes.line.use_line import use_line
 from shapes.oval.use_oval import use_oval
-
+from shapes.freeHand.use_freehand import use_freehand
+from shapes.circle.use_circle import use_circle
 
 
 # All figures
@@ -133,12 +134,11 @@ def setup(root):
     draw_tools = {
         'Desenhar um:': None,
         'Quadrado': use_rectangle,
-        #'Círculo': create_circle,
+        'Círculo': use_circle,
         'Oval': use_oval,
         'Linha': use_line,
-        #'Mão livre': create_freehand
+        'Mão livre': use_freehand
     }
-    print(figures)
     # Selection button
 
     def select_option_tool(option):
