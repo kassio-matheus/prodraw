@@ -19,6 +19,6 @@ class Update:
             Draw.draw(obj["obj"].canvas,figures)
 
             obj["obj"].canvas.create_line(obj["obj"].start_x, obj["obj"].start_y, obj["obj"].end_x, obj["obj"].end_y,
-                                          fill=obj["obj"].bg, tags="line")
+                                          fill=obj["obj"].bg, tags=("line", "shape"))
             
         return update_points

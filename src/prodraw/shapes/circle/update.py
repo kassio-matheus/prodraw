@@ -20,6 +20,6 @@ class Update:
             Draw.draw(obj["obj"].canvas,figures)
 
             obj["obj"].canvas.create_oval(obj["obj"].start_x-obj['obj'].raio, obj["obj"].start_y-obj['obj'].raio, obj["obj"].start_x+obj['obj'].raio, 
-                                          obj["obj"].start_y+obj['obj'].raio,fill=SHAPE_COLORS.get(obj["obj"].bg), outline = obj['obj'].bg, tags="circle")
+                                          obj["obj"].start_y+obj['obj'].raio,fill=SHAPE_COLORS.get(obj["obj"].bg), outline = obj['obj'].bg, tags=("circle", "shape"))
             
         return update_points

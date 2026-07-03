@@ -14,4 +14,4 @@ class Draw:
         for oval in figures:
             if isinstance(oval, Oval):
                 canvas.create_oval(oval.start_x, oval.start_y, oval.end_x, oval.end_y,
-                                              fill=SHAPE_COLORS.get(oval.bg), outline=oval.bg, tags="oval")
+                                              fill=SHAPE_COLORS.get(oval.bg), outline=oval.bg, tags=("oval", "shape"))

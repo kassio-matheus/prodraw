@@ -14,4 +14,4 @@ class Draw:
         for line in figures:
             if isinstance(line, Line):
                 canvas.create_line(line.start_x, line.start_y, line.end_x, line.end_y,
-                                              fill=line.bg, tags="line")
+                                              fill=line.bg, tags=("line", "shape"))
