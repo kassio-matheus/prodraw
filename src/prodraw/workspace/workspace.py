@@ -4,11 +4,8 @@ from .text_version import use_text_version
 from .grids import use_grids
 from .color_picker import use_color_picker
 from .buttons import use_clear_draw
-# from .tools import use_tools
 from .tools import use_tools
 from .zoom import use_zoom
-
-from .color_picker import COLORS
 
 
 class Workspace:
@@ -38,3 +35,7 @@ class Workspace:
 
         self.canvas.bind(
             "<MouseWheel>", lambda event: use_zoom(event, self.canvas))
+
+        #Restore the last version of figures
+        #self.root.bind("<Control-z>", lambda event: self.figures.set(self.figures.get().pop()))
+        #self.root.bind("<Command-z>", lambda event: self.figures.set(self.figures.get().pop()))
