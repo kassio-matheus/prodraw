@@ -1,8 +1,8 @@
 from tkinter import *
-
-from prodraw.shapes.shape import Shape
-from prodraw.shapes.colors import SHAPE_COLORS
 from dataclasses import *
+
+from prodraw.shapes import Shape
+from prodraw.config import SHAPE_COLORS
 
 
 @dataclass

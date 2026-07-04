@@ -1,7 +1,7 @@
-from prodraw.shapes import Shape
+from tkinter import *
 
 from .oval import Oval
-from tkinter import *
+
 
 class Start:
     """Manages the initial creation of an oval shape upon mouse click."""
