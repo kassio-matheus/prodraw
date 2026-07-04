@@ -1,3 +1,5 @@
+from .app import App
+
 from .workspace import Workspace
 
 from .shapes import use_rectangle
