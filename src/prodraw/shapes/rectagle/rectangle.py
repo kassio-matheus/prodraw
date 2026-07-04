@@ -1,8 +1,8 @@
 from tkinter import *
 
-from prodraw.shapes.shape import Shape
-from .rounded import create_round_rectangle
-#from src.shapes.colors import SHAPE_COLORS
+from prodraw.shapes import Shape
+#from .rounded import create_round_rectangle
+
 from dataclasses import *
 
 @dataclass

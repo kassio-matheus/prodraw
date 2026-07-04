@@ -1,7 +1,8 @@
 from tkinter import *
+
 from .line import Line
 
-from prodraw.shapes.colors import SHAPE_COLORS
+from prodraw.config import SHAPE_COLORS
 
 class Draw:
     """Renders line figures onto the canvas."""

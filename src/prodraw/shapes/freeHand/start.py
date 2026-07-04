@@ -1,7 +1,9 @@
+from tkinter import *
+
 from prodraw.shapes import Shape
 
 from .freeHand import FreeHand
-from tkinter import *
+
 
 class Start:
     """Manages the initial creation of a freehand shape upon mouse click."""

@@ -1,6 +1,3 @@
-from prodraw.shapes import Shape
-
-
 class Add:
     """Handles the addition of shape objects to a list."""
 
