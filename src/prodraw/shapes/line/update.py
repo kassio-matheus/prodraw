@@ -17,8 +17,9 @@ class Update:
             obj["obj"].end_x = event.x
             obj["obj"].end_y = event.y
             Draw.draw(obj["obj"].canvas, figures)
-
-            obj["obj"].canvas.create_line(obj["obj"].start_x, obj["obj"].start_y, obj["obj"].end_x, obj["obj"].end_y,
+            distance  = ((obj["obj"].end_x - obj["obj"].start_x)**2 + (obj["obj"].end_y - obj["obj"].start_y)**2)**0.5
+            if distance>5:
+                obj["obj"].canvas.create_line(obj["obj"].start_x, obj["obj"].start_y, obj["obj"].end_x, obj["obj"].end_y,
                                           fill=obj["obj"].bg, tags=("line", "shape"))
 
         return update_points
