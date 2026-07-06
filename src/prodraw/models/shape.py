@@ -11,7 +11,8 @@ from typing import ClassVar
 class Shape (ABC):
     """Abstract base class representing a generic drawable shape."""
 
-    canvas: Canvas
+
+
     bg: StringVar
 
     start_x: float = None
@@ -30,8 +31,19 @@ class Shape (ABC):
         self._bg = bg.get()
 
     @abstractmethod
-    # Binds mouse press, motion, and release events to the canvas
-    def bind(self, start, update, add):
-        self.canvas.bind('<ButtonPress-1>', start)
-        self.canvas.bind('<B1-Motion>', update)
-        self.canvas.bind('<ButtonRelease-1>', add)
+    def start(self):
+        pass
+
+    @abstractmethod
+    def update(self):
+        pass
+
+    @abstractmethod
+    def add(self):
+        pass
+
+    @abstractmethod
+    def empty(self):
+        pass
+
+    

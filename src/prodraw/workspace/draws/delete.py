@@ -1,3 +1,6 @@
+from prodraw.controllers.use_circleController import circle_delete
+
+
 class Delete:
     """Handles the removal of all drawn shapes from the canvas."""
     
@@ -11,7 +14,7 @@ class Delete:
     def delete_all_draws(self):
         self.canvas.delete("rectangle")
         self.canvas.delete("oval")
-        self.canvas.delete("circle")
+        circle_delete(self.canvas)
         self.canvas.delete("line")
         self.canvas.delete("freehand")
         self.figures.clear()
