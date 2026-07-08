@@ -18,7 +18,7 @@ def use_tools(canvas: Canvas, width: int = 250, height: int = 50,
     toolsbar: Frame = Toolbar(
         canvas, width=width, height=height, background=background).create_toolbar()
 
-    selected_option = StringVar(value="circle")
+    selected_option = StringVar(value="rectangle")
     select = Select(canvas, selected_option)
     select.select_option(selected_option.get(), selected_color_var, figures)
 

@@ -11,7 +11,7 @@ class LineView:
     canvas: Canvas
 
     def draw_preview(self, start_x: float, start_y: float, end_x: float, end_y: float, bg: str):
-        """Draw a preview of the rectangle being built (while dragging)."""
+        """Draw a preview of the line being built (while dragging)."""
 
         self.canvas.delete("line_preview")
         self.canvas.create_line(

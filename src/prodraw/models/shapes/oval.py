@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import ClassVar
 
-from prodraw.shapes import Shape
+from .shape import Shape
 
 
 @dataclass
