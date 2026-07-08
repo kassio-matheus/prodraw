@@ -1,15 +1,16 @@
-from prodraw.window import FullScreen, Version
+# from prodraw.window import FullScreen, Version
+from prodraw.controllers import create_window, destroy_window
+from prodraw.models import Version
 from prodraw.workspace import Workspace
 
 
 def main():
+    window = create_window(title="ProDraw", is_fullscreen=True)
     version = Version("1.0.0")
-    window = FullScreen(title="ProDraw")
-    window.bind()
 
-    Workspace(root=window.root, version=version).start()
+    Workspace(root=window.view.root, version=version).start()
 
-    window.root.mainloop()
+    window.run()
 
 
 main()
