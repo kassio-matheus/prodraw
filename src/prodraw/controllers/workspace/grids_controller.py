@@ -17,4 +17,4 @@ class GridsController:
         self.view.draw(event)
         # Re-render the version label so it stays visible after the grid redraw
         from .text_version_controller import TextVersionController
-        TextVersionController(self.canvas, self.version).setup()
+        #TextVersionController(self.canvas, self.version).setup()

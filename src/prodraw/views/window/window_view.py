@@ -19,6 +19,10 @@ class WindowView:
     def set_fullscreen(self, enabled: bool):
         self._root.attributes("-fullscreen", enabled)
 
+    def set_app_icon(self, icon: str):
+        photo = tk.PhotoImage(file=icon)
+        self._root.wm_iconphoto(True, photo)
+
     def start(self):
         self._root.mainloop()
 

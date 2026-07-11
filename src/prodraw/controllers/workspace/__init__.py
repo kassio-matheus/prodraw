@@ -5,3 +5,4 @@ from .grids_controller import GridsController
 from .text_version_controller import TextVersionController
 from .clear_draws_controller import ClearDrawsController
 from .zoom_controller import ZoomController
+from .logo_image_controller import LogoImageController
