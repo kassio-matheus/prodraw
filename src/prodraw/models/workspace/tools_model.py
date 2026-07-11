@@ -1,12 +1,13 @@
 from tkinter import StringVar
 
 from prodraw.controllers.shapes import (
-    circle_bind, rectangle_bind, oval_bind, line_bind, freedraw_bind
+    circle_bind, rectangle_bind, oval_bind, line_bind, freedraw_bind, square_bind
 )
 
 # Maps tool key strings to their shape controller bind functions
 DRAW_TOOLS = {
     'rectangle': rectangle_bind,
+    'square': square_bind,
     'circle':    circle_bind,
     'oval':      oval_bind,
     'line':      line_bind,

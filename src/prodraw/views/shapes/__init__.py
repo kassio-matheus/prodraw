@@ -3,3 +3,5 @@ from .rectangle_view import RectangleView
 from .oval_view import OvalView
 from .line_view import LineView
 from .freedraw_view import FreeDrawView
+from .square_view import SquareView
+

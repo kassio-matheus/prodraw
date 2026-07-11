@@ -3,7 +3,7 @@ class DrawsModel:
 
     SHAPE_TAGS = ["rectangle", "rectangle_preview", "oval", "oval_preview",
                   "circle", "circle_preview", "line", "line_preview",
-                  "freedraw", "freedraw_preview"]
+                  "freedraw", "freedraw_preview","square_preview","square"]
 
     def __init__(self, figures: dict):
         self.figures = figures

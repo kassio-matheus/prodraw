@@ -24,7 +24,7 @@ class Workspace:
         # figures dict matches the shape keys used by shape controllers
         self.figures = {
             'Circle': [], 'Rectangle': [],
-            'Oval': [], 'Line': [], 'FreeDraw': []
+            'Oval': [], 'Line': [], 'FreeDraw': [], 'Square':[]
         }
         self.version = version
 

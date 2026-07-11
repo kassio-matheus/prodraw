@@ -20,6 +20,7 @@ class ToolsController:
         'oval':      Oval,
         'line':      Line,
         'freedraw':  FreeDraw,
+        'square': Rectangle
     }
 
     def __init__(self, canvas: Canvas, selected_color_var: StringVar, figures: dict):

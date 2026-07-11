@@ -3,3 +3,4 @@ from .rectangle import rectangle_bind, rectangle_delete
 from .oval import oval_bind, oval_delete
 from .line import line_bind, line_delete
 from .freedraw import freedraw_bind, freedraw_delete
+from .square import square_bind, square_delete

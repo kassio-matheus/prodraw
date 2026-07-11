@@ -5,3 +5,4 @@ from .rectangle import Rectangle
 from .oval import Oval
 from .line import Line
 from .freedraw import FreeDraw
+from .square import Square
