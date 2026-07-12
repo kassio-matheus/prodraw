@@ -3,19 +3,17 @@ from typing import Callable
 
 from prodraw.models import Rectangle
 from prodraw.views import RectangleView
+from prodraw.controllers.shapes.tools import Tools
+from dataclasses import dataclass
 
 
-class RectangleController:
+@dataclass
+class RectangleController(Tools):
     """Bridges raw Tkinter mouse events and the Rectangle model/view.
     This is the only layer allowed to know about both Tkinter events
     and business rules (model state)."""
 
-    def __init__(self, canvas: Canvas, figures: dict, get_bg: Callable[[], str]):
-        self.canvas = canvas
-        self.figures = figures
-        self.get_bg = get_bg  # callable, e.g. selected_color_var.get
-        self.view = RectangleView(canvas)
-        self.current: Rectangle = None
+    current: Rectangle = None
 
     def bind(self):
         """Attach mouse event handlers to the canvas."""
@@ -36,7 +34,7 @@ class RectangleController:
         """Step 1: mouse down starts a new, uncommitted rectangle.
         A fresh Rectangle instance is created per press — no shared
         class-level state between draws."""
-        self.current = Rectangle(bg=self.get_bg())
+        self.current = Rectangle(bg=self.get_bg)
         self.current.start(event.x, event.y)
 
     def _on_drag(self, event: Event):
