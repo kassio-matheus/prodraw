@@ -15,26 +15,11 @@ class RectangleController(Tools):
 
     current: Rectangle = None
 
-    def bind(self):
-        """Attach mouse event handlers to the canvas."""
-        self.canvas.bind('<ButtonPress-1>', self._on_press)
-        self.canvas.bind('<B1-Motion>', self._on_drag)
-        self.canvas.bind('<ButtonRelease-1>', self._on_release)
-
-    def unbind(self):
-        """Detach mouse event handlers and clear any drawn rectangles.
-        Must be called when switching tools, otherwise stale bindings
-        keep reacting to mouse events meant for the next tool."""
-        self.canvas.unbind('<ButtonPress-1>')
-        self.canvas.unbind('<B1-Motion>')
-        self.canvas.unbind('<ButtonRelease-1>')
-        self.view.delete()
-
     def _on_press(self, event: Event):
         """Step 1: mouse down starts a new, uncommitted rectangle.
         A fresh Rectangle instance is created per press — no shared
         class-level state between draws."""
-        self.current = Rectangle(bg=self.get_bg)
+        self.current = Rectangle(bg=self.get_bg())
         self.current.start(event.x, event.y)
 
     def _on_drag(self, event: Event):

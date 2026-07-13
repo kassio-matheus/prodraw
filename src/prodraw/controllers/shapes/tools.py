@@ -13,14 +13,6 @@ class Tools(ABC):
 
 
     @abstractmethod
-    def bind(self):
-        pass
-
-    @abstractmethod
-    def unbind(self):
-        pass
-
-    @abstractmethod
     def _on_press(self, event: Event):
         pass
 

@@ -52,23 +52,26 @@ class ToolsController:
 
     def _on_select(self, tool_key: str):
         """Unbind the previous tool and bind the newly selected one."""
-        from prodraw.models.shapes.rectangle import Rectangle
         # Unbind the previous controller if one exists
 
         
         self.model.selected_option.set(tool_key)
         bind_fn = self.model.tools.get(tool_key)[0]
+        view_fn = self.model.tools.get(tool_key)[1]
+
         bind_fn.canvas = self.canvas
-        bind_fn.view = RectangleView(self.canvas)
+        view_fn.canvas = self.canvas
+
+        bind_fn.view = view_fn
 
         
         bind_fn.figures = self.figures
-        bind_fn.get_bg = self.selected_color_var.get()
+        bind_fn.get_bg = self.selected_color_var.get
         
         
 
-        self.model.tools.get(tool_key)[1].canvas = self.canvas
+        
 
         
 
-        ShapeController(bind_fn, self.model.tools.get(tool_key)[1])
+        ShapeController(bind_fn, view_fn)
