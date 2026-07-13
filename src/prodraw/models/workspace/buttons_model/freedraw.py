@@ -1,6 +1,7 @@
 from tkinter import *
 
 from .button import Button
+from prodraw.models.workspace.toolbar_model import TOOLBAR_BG
 
 
 class FreeDraw(Button):
@@ -32,14 +33,17 @@ class FreeDraw(Button):
         if self.icon_id is not None:
             self.canvas.delete(self.icon_id)
 
-        line_color = self.selected_color_var.get(
-        ) if self.selected_color_var and self.is_selected else "#FFFFFF"
+        fill_color = self.selected_color_var.get(
+        ) if self.selected_color_var and self.is_selected else TOOLBAR_BG
+        border_color = self.shape_colors.get(
+            fill_color, "#FFFFFF") if self.is_selected else self.background
 
-        bg_color = self.shape_colors.get(
-            line_color, self.background) if self.is_selected else self.background
-
-        # Signals selection by changing the canvas background, since a line has no internal fill
-        self.canvas.configure(bg=bg_color)
+        self.canvas.configure(
+            bg=border_color,
+            highlightthickness=1,
+            highlightbackground=fill_color,
+            highlightcolor=fill_color,
+        )
 
         w, h = self.width, self.height
         p = self.padding
@@ -56,7 +60,7 @@ class FreeDraw(Button):
 
         self.icon_id = self.canvas.create_line(
             *points,
-            fill=line_color,
+            fill="#FFFFFF",
             width=2,
             smooth=True,
             splinesteps=24,

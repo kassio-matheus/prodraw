@@ -7,3 +7,4 @@ from .clear_draws_model import ClearDrawsModel
 from .zoom_model import ZoomModel
 from .toolbar_model import ToolbarModel, TOOLBAR_BG
 from .logo_image_model import LogoImageModel
+from .cursor_model import CursorModel

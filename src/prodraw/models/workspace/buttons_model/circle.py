@@ -1,11 +1,12 @@
 from tkinter import *
 
 from .button import Button
+from prodraw.models.workspace.toolbar_model import TOOLBAR_BG
 
 
 class Circle(Button):
     """Represents a circle tool button in the toolbar."""
-    
+
     # Initializes the circle button properties and state watchers
     def __init__(self, toolsbar: Frame, width: int = 50, height: int = 50,
                  command=None, padding: int = 8, background: str = "#303035",
@@ -32,16 +33,20 @@ class Circle(Button):
         if self.icon_id is not None:
             self.canvas.delete(self.icon_id)
 
-        border_color = self.selected_color_var.get(
-        ) if self.selected_color_var and self.is_selected else "#FFFFFF"
-        fill_color = self.shape_colors.get(
-            border_color, "white") if self.is_selected else self.background
+        fill_color = self.selected_color_var.get(
+        ) if self.selected_color_var and self.is_selected else TOOLBAR_BG
+        border_color = self.shape_colors.get(
+            fill_color, "#FFFFFF") if self.is_selected else self.background
 
-        self.canvas.configure(bg=fill_color)
+        self.canvas.configure(
+            bg=border_color,
+            highlightthickness=1,
+            highlightbackground=fill_color,
+            highlightcolor=fill_color,
+        )
 
         self.icon_id = self.canvas.create_oval(
             self.padding, self.padding,
             self.width - self.padding, self.height - self.padding,
-            outline=border_color,
-            fill=fill_color,
+            outline="#FFFFFF",
         )

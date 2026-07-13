@@ -12,6 +12,8 @@ from prodraw.models.workspace.buttons_model.circle import Circle
 from prodraw.models.workspace.buttons_model.oval import Oval
 from prodraw.models.workspace.buttons_model.line import Line
 from prodraw.models.workspace.buttons_model.freedraw import FreeDraw
+from prodraw.models.workspace.buttons_model.cursor import Cursor
+from prodraw.models.workspace.buttons_model.square import Square
 
 
 class ToolsController:
@@ -19,12 +21,13 @@ class ToolsController:
 
     # Maps each tool key to its button class
     BUTTON_CLASSES = {
+        'cursor': Cursor,
         'rectangle': Rectangle,
+        'square': Square,
         'circle':    Circle,
         'oval':      Oval,
         'line':      Line,
-        'freedraw':  FreeDraw,
-        'square': Rectangle
+        'freedraw':  FreeDraw
     }
 
     def __init__(self, canvas: Canvas, selected_color_var: StringVar, figures: dict):
