@@ -75,7 +75,6 @@ class Workspace:
                         self.figures[figure] = figures_loaded
 
                         for data in figures_loaded:
-                            
                             if figure == "Rectangle":
                                 rectangle_sync_data(
                                     self.canvas, figures=self.figures, data=data)

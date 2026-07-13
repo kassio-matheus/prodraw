@@ -10,18 +10,22 @@ def freedraw_bind(canvas: Canvas, figures: dict, bg: StringVar) -> FreeDrawContr
     return controller
 
 
-def freedraw_sync_data(canvas: Canvas, figures: list, data: list) -> FreeDrawController:
+def freedraw_sync_data(canvas: Canvas, figures: list, data: dict) -> FreeDrawController:
     controller = FreeDrawController(canvas, figures, get_bg=lambda: "#000000")
 
-    formated_data = {
-        "start_x": data[0],
-        "start_y": data[1],
-        "end_x": data[2],
-        "end_y": data[3],
-        "bg": data[4]
-    }
+    positions = data.get("positions", [])
+    bg_color = data.get("bg", "#000000")
 
-    controller.view.draw(**formated_data)
+    # Percorre a lista conectando o ponto atual ao PRÓXIMO ponto
+    for i in range(len(positions) - 1):
+        start_x = positions[i][0]
+        start_y = positions[i][1]
+
+        # O fim da linha é o PRÓXIMO ponto da lista
+        end_x = positions[i+1][0]
+        end_y = positions[i+1][1]
+
+        controller.view.draw(start_x, start_y, end_x, end_y, bg=bg_color)
 
     return controller
 

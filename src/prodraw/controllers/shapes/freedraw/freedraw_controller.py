@@ -16,12 +16,13 @@ class FreeDrawController:
         self.get_bg = get_bg  # callable, e.g. selected_color_var.get
         self.view = FreeDrawView(canvas)
         self.current: FreeDraw = None
+        self.positions = []
 
     def bind(self):
         """Attach mouse event handlers to the canvas."""
         self.canvas.bind('<ButtonPress-1>', self._on_press)
         self.canvas.bind('<B1-Motion>', self._on_drag)
-        # self.canvas.bind('<ButtonRelease-1>', self._on_release)
+        self.canvas.bind('<ButtonRelease-1>', self._on_release)
 
     def unbind(self):
         """Detach mouse event handlers and clear any drawn freedraws.
@@ -44,11 +45,16 @@ class FreeDrawController:
         and renders a preview only, never touching the
         confirmed figures list."""
         self.current.update(event.x, event.y)
+
         if self.current.has_min_size():
             self.view.draw(
                 self.current.start_x, self.current.start_y, self.current.end_x, self.current.end_y, self.current.bg)
             self.current.start_x = self.current.end_x
             self.current.start_y = self.current.end_y
+
+        freedraw_data = (event.x, event.y)
+        self.positions.append(freedraw_data)
+        print(self.positions)
 
     def _on_release(self, event: Event):
         """Step 3: mouse up commits the freedraw if it meets the minimum
@@ -56,9 +62,6 @@ class FreeDrawController:
         once via draw — never redrawing the whole canvas here,
         since already-drawn freedraws are immutable and don't need to
         be redrawn."""
-        if self.current.has_min_size():
-            freedraw_data = self.current.to_tuple()
-            self.figures['FreeDraw'].append(freedraw_data)
-            self.view.draw(*freedraw_data)
-        self.view.clear_preview()
+        self.figures['FreeDraw'].append(
+            {"bg": self.get_bg(), "positions": self.positions})
         self.current = None
