@@ -3,8 +3,9 @@ from typing import Callable
 
 from prodraw.models import FreeDraw
 from prodraw.views import FreeDrawView
-from dataclasses  import dataclass, field
+from dataclasses import dataclass, field
 from prodraw.controllers.shapes.tools import *
+
 
 @dataclass
 class FreeDrawController(Tools):
@@ -13,8 +14,8 @@ class FreeDrawController(Tools):
     and business rules (model state)."""
 
     current: FreeDraw = None
-    positions:list =  field(default_factory=list)
-    
+    positions: list = field(default_factory=list)
+    positions_preview: list = field(default_factory=list)
 
     def _on_press(self, event: Event):
         """Step 1: mouse down starts a new, uncommitted freedraw.
@@ -22,6 +23,10 @@ class FreeDrawController(Tools):
         class-level state between draws."""
         self.current = FreeDraw(bg=self.get_bg())
         self.current.start(event.x, event.y)
+
+        freedraw_data = (event.x, event.y)
+        self.positions.append(freedraw_data)
+        self.positions_preview.append(freedraw_data)
 
     def _on_drag(self, event: Event):
         """Step 2: mouse movement updates the in-progress freedraw's
@@ -37,13 +42,21 @@ class FreeDrawController(Tools):
 
         freedraw_data = (event.x, event.y)
         self.positions.append(freedraw_data)
+        self.positions_preview.append(freedraw_data)
 
     def _on_release(self, event: Event):
-        """Step 3: mouse up commits the freedraw if it meets the minimum
-        size. The confirmed freedraw is appended to the model and drawn
-        once via draw — never redrawing the whole canvas here,
-        since already-drawn freedraws are immutable and don't need to
-        be redrawn."""
+        if len(self.positions_preview) == 1:
+            p = self.positions_preview[0]
+            self.positions_preview.append(p)
+            self.positions.append(p)
+
         self.figures['FreeDraw'].append(
             {"bg": self.get_bg(), "positions": self.positions})
         self.current = None
+        self.view.clear_preview()
+
+        if len(self.positions_preview) >= 2:
+            self.view.draw_path(self.positions_preview, bg=self.get_bg())
+
+        self.positions = []
+        self.positions_preview = []

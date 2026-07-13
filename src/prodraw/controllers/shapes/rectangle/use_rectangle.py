@@ -2,6 +2,7 @@ from tkinter import Canvas, StringVar
 
 from .rectangle_controller import RectangleController
 from prodraw.models.shapes import Rectangle
+from prodraw.views.shapes import RectangleView
 
 
 def rectangle_bind(canvas: Canvas, figures: dict, bg: StringVar) -> RectangleController:
@@ -11,7 +12,9 @@ def rectangle_bind(canvas: Canvas, figures: dict, bg: StringVar) -> RectangleCon
 
 
 def rectangle_sync_data(canvas: Canvas, figures: list, data: list) -> RectangleController:
-    controller = RectangleController(canvas, figures, get_bg=lambda: "#000000")
+    view = RectangleView(canvas=canvas)
+    controller = RectangleController(
+        canvas, figures, get_bg=lambda: "#000000", view=view)
 
     formated_data = {
         "start_x": data[0],

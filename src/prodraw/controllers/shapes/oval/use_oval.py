@@ -2,6 +2,7 @@ from tkinter import Canvas, StringVar
 
 from .oval_controller import OvalController
 from prodraw.models.shapes import Oval
+from prodraw.views.shapes import OvalView
 
 
 def oval_bind(canvas: Canvas, figures: dict, bg: StringVar) -> OvalController:
@@ -11,7 +12,9 @@ def oval_bind(canvas: Canvas, figures: dict, bg: StringVar) -> OvalController:
 
 
 def oval_sync_data(canvas: Canvas, figures: list, data: list) -> OvalController:
-    controller = OvalController(canvas, figures, get_bg=lambda: "#000000")
+    view = OvalView(canvas=canvas)
+    controller = OvalController(
+        canvas, figures, get_bg=lambda: "#000000", view=view)
 
     formated_data = {
         "start_x": data[0],

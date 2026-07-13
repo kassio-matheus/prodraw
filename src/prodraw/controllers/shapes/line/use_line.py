@@ -2,6 +2,7 @@ from tkinter import Canvas, StringVar
 
 from .line_controller import LineController
 from prodraw.models.shapes import Line
+from prodraw.views.shapes import LineView
 
 
 def line_bind(canvas: Canvas, figures: dict, bg: StringVar) -> LineController:
@@ -11,7 +12,9 @@ def line_bind(canvas: Canvas, figures: dict, bg: StringVar) -> LineController:
 
 
 def line_sync_data(canvas: Canvas, figures: list, data: list) -> LineController:
-    controller = LineController(canvas, figures, get_bg=lambda: "#000000")
+    view = LineView(canvas=canvas)
+    controller = LineController(
+        canvas, figures, get_bg=lambda: "#000000", view=view)
 
     formated_data = {
         "start_x": data[0],

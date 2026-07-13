@@ -2,6 +2,7 @@ from tkinter import Canvas, StringVar
 
 from .square_controller import SquareController
 from prodraw.models.shapes import Square
+from prodraw.views.shapes import SquareView
 
 
 def square_bind(canvas: Canvas, figures: dict, bg: StringVar) -> SquareController:
@@ -11,7 +12,9 @@ def square_bind(canvas: Canvas, figures: dict, bg: StringVar) -> SquareControlle
 
 
 def square_sync_data(canvas: Canvas, figures: list, data: list) -> SquareController:
-    controller = SquareController(canvas, figures, get_bg=lambda: "#000000")
+    view = SquareView(canvas=canvas)
+    controller = SquareController(
+        canvas, figures, get_bg=lambda: "#000000", view=view)
 
     formated_data = {
         "start_x": data[0],

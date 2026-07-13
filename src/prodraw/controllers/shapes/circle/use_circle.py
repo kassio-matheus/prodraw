@@ -2,6 +2,7 @@ from tkinter import Canvas, StringVar
 
 from .circle_controller import CircleController
 from prodraw.models.shapes import Circle
+from prodraw.views.shapes import CircleView
 
 
 def circle_bind(canvas: Canvas, figures: dict, bg: StringVar) -> CircleController:
@@ -11,7 +12,9 @@ def circle_bind(canvas: Canvas, figures: dict, bg: StringVar) -> CircleControlle
 
 
 def circle_sync_data(canvas: Canvas, figures: list, data: list) -> CircleController:
-    controller = CircleController(canvas, figures, get_bg=lambda: "#000000")
+    view = CircleView(canvas=canvas)
+    controller = CircleController(
+        canvas, figures, get_bg=lambda: "#000000", view=view)
 
     formated_data = {
         "x": data[0],

@@ -1,4 +1,3 @@
-# from prodraw.window import FullScreen, Version
 from prodraw.controllers import create_window
 from prodraw.models import Version
 from prodraw.workspace import Workspace
