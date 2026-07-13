@@ -1,16 +1,20 @@
 from tkinter import Canvas, Event
 
 from prodraw.models.workspace.zoom_model import ZoomModel
+
 from prodraw.views.workspace.zoom_view import ZoomView
+
+from prodraw.controllers.window import WindowController
 
 
 class ZoomController:
     """Handles mouse-wheel events and applies zoom to the canvas."""
 
-    def __init__(self, canvas: Canvas):
+    def __init__(self, canvas: Canvas, window: WindowController):
         self.canvas = canvas
         self.model = ZoomModel()
         self.view = ZoomView(canvas, self.model)
+        self.window = window
 
     def on_scroll(self, event: Event):
         """Compute the new zoom factor and apply it centered on the cursor."""
@@ -30,3 +34,6 @@ class ZoomController:
         scale_step = new_factor / ZoomModel.factor
         self.view.apply_scale(x, y, scale_step)
         ZoomModel.factor = new_factor
+
+    def setup(self):
+        self.window.bind("<MouseWheel>", self.on_scroll)

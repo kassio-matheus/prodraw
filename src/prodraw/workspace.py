@@ -120,17 +120,21 @@ class Workspace:
         selected_color_var = color_ctrl.setup()
 
         # Clear-all button
-        ClearDrawsController(self.canvas, self.figures).setup()
+        ClearDrawsController(self.canvas, self.figures,
+                             window=self.window, subItemMenu="Arquivo").setup()
 
         # Toolbar with drawing tool buttons
         ToolsController(self.canvas, selected_color_var, self.figures).setup()
 
         # Scroll-to-zoom
-        zoom_ctrl = ZoomController(self.canvas)
-        self.canvas.bind("<MouseWheel>", zoom_ctrl.on_scroll)
+        zoom_ctrl = ZoomController(self.canvas, window=self.window)
+        zoom_ctrl.setup()
+        
 
-        # Load or save file in menubar
+        # Load or save file in menubar -> Waiting for create in MVC
+
         self.window.update_menu(isSubItem=True, subItem="Arquivo",
                                 label="Exportar workspace", command=lambda: self.save_file(self.figures))
+
         self.window.update_menu(isSubItem=True, subItem="Arquivo",
                                 label="Importar workspace", command=self.load_file)

@@ -1,17 +1,23 @@
 from tkinter import Canvas
+
 from prodraw.models.workspace.clear_draws_model import ClearDrawsModel
+
 from prodraw.views.workspace.clear_draws_view import ClearDrawsView
+
 from .draws_controller import DrawsController
+from prodraw.controllers.window import WindowController
 
 
 class ClearDrawsController:
     """Wires the clear button to the draws deletion logic."""
 
-    def __init__(self, canvas: Canvas, figures: dict):
+    def __init__(self, canvas: Canvas, figures: dict, window: WindowController, subItemMenu: str):
         self.canvas = canvas
         self.figures = figures
         self.model = ClearDrawsModel()
-        self.view = ClearDrawsView(canvas, self.model)
+        self.view = ClearDrawsView(
+            canvas, self.model, window=window, subItemMenu=subItemMenu)
+        self.subItemMenu = subItemMenu
 
     def setup(self):
         self.view.render(on_click=self._on_click)

@@ -1,16 +1,22 @@
 from tkinter import Canvas
-from tkinter import ttk
+
 from prodraw.models.workspace.clear_draws_model import ClearDrawsModel
+from prodraw.controllers.window import WindowController
 
 
 class ClearDrawsView:
     """Renders the 'clear all drawings' button on the canvas."""
 
-    def __init__(self, canvas: Canvas, model: ClearDrawsModel):
+    def __init__(self, canvas: Canvas, model: ClearDrawsModel, window: WindowController, subItemMenu: str):
         self.canvas = canvas
         self.model = model
+        self.window = window
+        self.subItemMenu = subItemMenu
 
     def render(self, on_click):
         """Place the clear button at the bottom-right corner of the canvas."""
-        btn = ttk.Button(self.canvas, text=self.model.label, command=on_click)
-        btn.pack(side="bottom", anchor="se", padx=30, pady=(0, 30), expand=False)
+        # btn = ttk.Button(self.canvas, text=self.model.label, command=on_click)
+        # btn.pack(side="bottom", anchor="se", padx=30, pady=(0, 30), expand=False)
+
+        self.window.update_menu(isSubItem=True, subItem=self.subItemMenu,
+                                label=self.model.label, command=on_click)
