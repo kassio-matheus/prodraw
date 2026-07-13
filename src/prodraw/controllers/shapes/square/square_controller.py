@@ -1,9 +1,11 @@
 from tkinter import Canvas, Event
 from typing import Callable
+from dataclasses import dataclass
 
 from prodraw.models import Square
+
 from prodraw.views import SquareView
-from dataclasses import dataclass
+
 from prodraw.controllers.shapes.tools import Tools
 
 

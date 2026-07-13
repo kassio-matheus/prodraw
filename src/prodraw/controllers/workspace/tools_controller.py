@@ -1,11 +1,12 @@
 from tkinter import Canvas, StringVar
+
+# Models
 from prodraw.models.workspace.tools_model import ToolsModel, DEFAULT_TOOL
 from prodraw.views.workspace.toolbar_view import ToolbarView
 from prodraw.models.workspace.toolbar_model import ToolbarModel
+
+# Controllers
 from prodraw.controllers.shapes.shape_controller import ShapeController
-from prodraw.views.shapes.rectangle_view import RectangleView
-
-
 from prodraw.models.workspace.buttons_model.rectangle import Rectangle
 from prodraw.models.workspace.buttons_model.circle import Circle
 from prodraw.models.workspace.buttons_model.oval import Oval
@@ -47,14 +48,11 @@ class ToolsController:
                 on_click=self._on_select,
             )
 
-        # Activate the default tool immediately
         self._on_select(DEFAULT_TOOL)
 
     def _on_select(self, tool_key: str):
         """Unbind the previous tool and bind the newly selected one."""
-        # Unbind the previous controller if one exists
 
-        
         self.model.selected_option.set(tool_key)
         bind_fn = self.model.tools.get(tool_key)[0]
         view_fn = self.model.tools.get(tool_key)[1]
@@ -64,14 +62,7 @@ class ToolsController:
 
         bind_fn.view = view_fn
 
-        
         bind_fn.figures = self.figures
         bind_fn.get_bg = self.selected_color_var.get
-        
-        
-
-        
-
-        
 
         ShapeController(bind_fn, view_fn)

@@ -11,4 +11,5 @@ class ZoomView:
 
     def apply_scale(self, x: float, y: float, scale_step: float):
         """Scale all 'shape'-tagged items around the given canvas point."""
+
         self.canvas.scale("shape", x, y, scale_step, scale_step)

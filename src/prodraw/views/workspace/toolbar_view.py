@@ -16,6 +16,7 @@ class ToolbarView:
         self.frame = Frame(self.canvas, bg=self.model.background,
                            width=self.model.width, height=self.model.height)
         self.frame.place(relx=0.5, rely=1.0, anchor="s", y=-30)
+
         return self.frame
 
     def create_tool_button(self, tool_cls, selected_color_var, selected_option,
@@ -42,4 +43,5 @@ class ToolbarView:
             padding=self.model.button_padding,
         )
         btn.create_button()
+
         return btn

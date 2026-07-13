@@ -1,9 +1,8 @@
-from tkinter import Canvas, Event
-from typing import Callable
+from tkinter import Event
+from dataclasses import dataclass, field
 
 from prodraw.models import FreeDraw
 from prodraw.views import FreeDrawView
-from dataclasses import dataclass, field
 from prodraw.controllers.shapes.tools import *
 
 

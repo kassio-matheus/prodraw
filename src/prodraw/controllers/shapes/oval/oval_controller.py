@@ -1,10 +1,12 @@
-from tkinter import Canvas, Event
-from typing import Callable
+from tkinter import Event
+from dataclasses import dataclass
 
 from prodraw.models import Oval
+
 from prodraw.views import OvalView
-from dataclasses import dataclass
+
 from prodraw.controllers.shapes.tools import Tools
+
 
 @dataclass
 class OvalController(Tools):

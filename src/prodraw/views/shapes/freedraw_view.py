@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from tkinter import Canvas
+
 from prodraw.config import SHAPE_COLORS
 
 

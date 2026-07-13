@@ -1,7 +1,8 @@
-from prodraw.controllers.shapes.tools import Tools
 from dataclasses import dataclass
 from tkinter import *
 from typing import Any
+
+from prodraw.controllers.shapes.tools import Tools
 
 
 @dataclass

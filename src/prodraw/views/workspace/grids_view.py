@@ -13,12 +13,10 @@ class GridsView:
         """Clear and redraw the full dot grid to match the current canvas size."""
         self.canvas.delete("grids")
 
-        # Use o tamanho atualizado direto do evento
         width = event.width
         height = event.height
         grid_size = self.model.grid_size
 
-        # Adicione o grid_size ao limite final para cobrir as bordas
         for x in range(0, width + grid_size, grid_size):
             for y in range(0, height + grid_size, grid_size):
                 self.canvas.create_oval(

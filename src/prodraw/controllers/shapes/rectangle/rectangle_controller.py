@@ -1,10 +1,11 @@
-from tkinter import Canvas, Event
-from typing import Callable
+from tkinter import Event
+from dataclasses import dataclass
 
 from prodraw.models import Rectangle
+
 from prodraw.views import RectangleView
+
 from prodraw.controllers.shapes.tools import Tools
-from dataclasses import dataclass
 
 
 @dataclass

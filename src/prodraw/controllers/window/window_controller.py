@@ -1,10 +1,14 @@
 from typing import Callable
 
+# Models
 from prodraw.models import Window
+from prodraw.models.window.menubar import MenubarCascade, MenubarCommand
+
+# Views
 from prodraw.views import WindowView
 
+# Controllers
 from .menubar_controller import MenubarController
-from prodraw.models.window.menubar import MenubarCascade, MenubarCommand
 
 
 class WindowController:

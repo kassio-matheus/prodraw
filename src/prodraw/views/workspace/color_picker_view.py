@@ -20,18 +20,23 @@ class ColorPickerView:
     def _create_button(self, row, col, color, on_color_click):
         """Create a single circular color swatch button."""
         from tkinter import Canvas as TkCanvas
+
         cv = TkCanvas(self.panel, width=BUTTON_SIZE, height=BUTTON_SIZE,
                       bg=PANEL_BG, highlightthickness=0, cursor="hand2")
         cv.grid(row=row, column=col, padx=4, pady=4)
-        cv.create_oval(6, 6, BUTTON_SIZE - 6, BUTTON_SIZE - 6, fill=color, outline="")
+        cv.create_oval(6, 6, BUTTON_SIZE - 6, BUTTON_SIZE -
+                       6, fill=color, outline="")
         cv.bind("<Button-1>", lambda e, c=color: on_color_click(c))
+
         self.model.canvas_by_color[color] = cv
 
     def highlight(self, color: str):
         """Highlight the button for the given color."""
+
         self.model.canvas_by_color[color].config(bg=SELECTED_BG)
 
     def unhighlight(self, color: str):
         """Remove highlight from the given color button."""
+
         if color in self.model.canvas_by_color:
             self.model.canvas_by_color[color].config(bg=PANEL_BG)

@@ -1,7 +1,6 @@
 from tkinter import Canvas, StringVar
 
 from .line_controller import LineController
-from prodraw.models.shapes import Line
 from prodraw.views.shapes import LineView
 
 

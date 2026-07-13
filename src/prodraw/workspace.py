@@ -1,18 +1,19 @@
 from tkinter import Canvas, Tk, filedialog, messagebox
 import pickle
 
-from prodraw.controllers.window import WindowController
-
+# Config imports
 from prodraw.config import WORKSPACE_COLORS
 
+# Controllers
+from prodraw.controllers.window import WindowController
 from prodraw.controllers.workspace.color_picker_controller import ColorPickerController
 from prodraw.controllers.workspace.grids_controller import GridsController
-# from prodraw.controllers.workspace.text_version_controller import TextVersionController
 from prodraw.controllers.workspace.clear_draws_controller import ClearDrawsController
 from prodraw.controllers.workspace.tools_controller import ToolsController
 from prodraw.controllers.workspace.zoom_controller import ZoomController
 from prodraw.controllers.workspace.logo_image_controller import LogoImageController
 
+# Sync data functions controllers - Load file .pickle
 from prodraw.controllers.shapes.rectangle import rectangle_sync_data
 from prodraw.controllers.shapes.oval import oval_sync_data
 from prodraw.controllers.shapes.line import line_sync_data
@@ -30,11 +31,13 @@ class Workspace:
 
         self.canvas = Canvas(root, bg=self.bg, highlightthickness=0,
                              relief="flat", borderwidth=0)
+
         # figures dict matches the shape keys used by shape controllers
         self.figures = {
             'Circle': [], 'Rectangle': [],
             'Oval': [], 'Line': [], 'FreeDraw': [], 'Square': []
         }
+
         self.version = version
         self.window = window
 
@@ -102,9 +105,6 @@ class Workspace:
 
     def start(self):
         self.canvas.pack(fill="both", expand=True)
-
-        # Version watermark at the bottom-left
-        # TextVersionController(self.canvas, self.version).setup()
 
         # Dot grid — redraws on every canvas resize
         grid_ctrl = GridsController(self.canvas, self.version)

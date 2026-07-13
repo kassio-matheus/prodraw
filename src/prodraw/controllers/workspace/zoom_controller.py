@@ -1,4 +1,5 @@
 from tkinter import Canvas, Event
+
 from prodraw.models.workspace.zoom_model import ZoomModel
 from prodraw.views.workspace.zoom_view import ZoomView
 
@@ -17,9 +18,11 @@ class ZoomController:
         y = self.canvas.canvasy(event.y)
 
         if event.delta > 0:
-            new_factor = min(round(ZoomModel.factor + ZoomModel.STEP, 1), ZoomModel.MAX)
+            new_factor = min(
+                round(ZoomModel.factor + ZoomModel.STEP, 1), ZoomModel.MAX)
         else:
-            new_factor = max(round(ZoomModel.factor - ZoomModel.STEP, 1), ZoomModel.MIN)
+            new_factor = max(
+                round(ZoomModel.factor - ZoomModel.STEP, 1), ZoomModel.MIN)
 
         if new_factor == ZoomModel.factor:
             return

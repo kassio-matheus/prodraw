@@ -1,7 +1,6 @@
 from tkinter import Canvas, StringVar
 
 from .rectangle_controller import RectangleController
-from prodraw.models.shapes import Rectangle
 from prodraw.views.shapes import RectangleView
 
 

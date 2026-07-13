@@ -1,7 +1,6 @@
 from tkinter import Canvas, StringVar
 
 from .oval_controller import OvalController
-from prodraw.models.shapes import Oval
 from prodraw.views.shapes import OvalView
 
 

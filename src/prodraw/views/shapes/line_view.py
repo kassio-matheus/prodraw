@@ -21,6 +21,7 @@ class LineView:
 
     def draw(self, start_x: float, start_y: float, end_x: float, end_y: float, distance: float, bg: str) -> int:
         """Draws a single line."""
+
         return self.canvas.create_line(
             start_x, start_y, end_x, end_y,
             fill=bg,

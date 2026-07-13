@@ -1,4 +1,5 @@
 from tkinter import Canvas, StringVar
+
 from prodraw.models.workspace.color_picker_model import ColorPickerModel, DEFAULT_COLOR
 from prodraw.views.workspace.color_picker_view import ColorPickerView
 

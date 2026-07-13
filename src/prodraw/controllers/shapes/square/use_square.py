@@ -1,7 +1,6 @@
 from tkinter import Canvas, StringVar
 
 from .square_controller import SquareController
-from prodraw.models.shapes import Square
 from prodraw.views.shapes import SquareView
 
 

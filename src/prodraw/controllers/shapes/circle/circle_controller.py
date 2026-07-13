@@ -1,10 +1,12 @@
-from tkinter import Canvas, Event
-from typing import Callable
+from tkinter import Event
+from dataclasses import dataclass
 
 from prodraw.models import Circle
+
 from prodraw.views import CircleView
-from dataclasses import dataclass
+
 from prodraw.controllers.shapes.tools import Tools
+
 
 @dataclass
 class CircleController(Tools):
@@ -13,7 +15,7 @@ class CircleController(Tools):
     and business rules (model state)."""
 
     current: Circle = None
-    
+
     def _on_press(self, event: Event):
         """Step 1: mouse down starts a new, uncommitted circle.
         A fresh Circle instance is created per press — no shared

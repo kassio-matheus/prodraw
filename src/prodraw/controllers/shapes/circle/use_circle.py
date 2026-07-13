@@ -1,7 +1,6 @@
 from tkinter import Canvas, StringVar
 
 from .circle_controller import CircleController
-from prodraw.models.shapes import Circle
 from prodraw.views.shapes import CircleView
 
 

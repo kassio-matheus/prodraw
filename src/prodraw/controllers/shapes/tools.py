@@ -4,13 +4,13 @@ from tkinter import *
 from typing import Callable, Any
 from abc import ABC, abstractmethod
 
+
 @dataclass
 class Tools(ABC):
     canvas: Canvas = None
     figures: dict = None
     get_bg: Callable[[], str] = None
     view: Any = None
-
 
     @abstractmethod
     def _on_press(self, event: Event):
@@ -23,7 +23,3 @@ class Tools(ABC):
     @abstractmethod
     def _on_release(self, event: Event):
         pass
-
-
-
-
