@@ -13,7 +13,7 @@ class FreeDrawView:
             start_x, start_y, end_x, end_y,
             fill=bg,
             smooth=True,
-            width=5,
+            width=4,
             capstyle="round",
             joinstyle="round",
             tags=("freedraw_preview", "shape")
@@ -24,7 +24,7 @@ class FreeDrawView:
             start_x, start_y, end_x, end_y,
             fill=bg,
             smooth=True,
-            width=5,
+            width=4,
             capstyle="round",
             joinstyle="round",
             tags=("freedraw", "shape", f"id_{shape_id}")
@@ -38,7 +38,7 @@ class FreeDrawView:
             positions,
             fill=bg,
             smooth=True,
-            width=4,
+            width=3,
             capstyle="round",
             joinstyle="round",
             tags=("freedraw", "shape", f"id_{shape_id}")

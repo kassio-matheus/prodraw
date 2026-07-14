@@ -17,7 +17,7 @@ class LineView:
             start_x, start_y, end_x, end_y,
             fill=bg,
             smooth=True,
-            width=5,
+            width=4,
             capstyle="round",
             joinstyle="round",
             tags=("line_preview", "shape"))
@@ -29,7 +29,7 @@ class LineView:
             start_x, start_y, end_x, end_y,
             fill=bg,
             smooth=True,
-            width=5,
+            width=4,
             capstyle="round",
             joinstyle="round",
             tags=("line", "shape", f"id_{shape_id}"))

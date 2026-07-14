@@ -10,7 +10,7 @@ def square_bind(canvas: Canvas, figures: dict, bg: StringVar) -> SquareControlle
     return controller
 
 
-def square_sync_data(canvas: Canvas, figures: list, data: list) -> SquareController:
+def square_sync_data(canvas: Canvas, figures: list, data: tuple) -> SquareController:
     view = SquareView(canvas=canvas)
     controller = SquareController(
         canvas, figures, get_bg=lambda: "#000000", view=view)

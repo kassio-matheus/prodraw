@@ -10,7 +10,7 @@ def rectangle_bind(canvas: Canvas, figures: dict, bg: StringVar) -> RectangleCon
     return controller
 
 
-def rectangle_sync_data(canvas: Canvas, figures: list, data: list) -> RectangleController:
+def rectangle_sync_data(canvas: Canvas, figures: list, data: tuple) -> RectangleController:
     view = RectangleView(canvas=canvas)
     controller = RectangleController(
         canvas, figures, get_bg=lambda: "#000000", view=view)

@@ -19,7 +19,7 @@ class RectangleView:
             tags=("rectangle_preview", "shape"))
 
     def draw(self, shape_id: int, start_x: float, start_y: float, end_x: float, end_y: float, distance_x: float, distance_y: float, bg: str) -> int:
-        """Draws a single circle."""
+        """Draws a single rectangle."""
 
         return self.canvas.create_rectangle(
             start_x, start_y, end_x, end_y,

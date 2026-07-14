@@ -10,7 +10,7 @@ def circle_bind(canvas: Canvas, figures: dict, bg: StringVar) -> CircleControlle
     return controller
 
 
-def circle_sync_data(canvas: Canvas, figures: list, data: list) -> CircleController:
+def circle_sync_data(canvas: Canvas, figures: list, data: tuple) -> CircleController:
     view = CircleView(canvas=canvas)
     controller = CircleController(
         canvas, figures, get_bg=lambda: "#000000", view=view)

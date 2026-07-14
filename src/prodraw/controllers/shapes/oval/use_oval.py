@@ -10,7 +10,7 @@ def oval_bind(canvas: Canvas, figures: dict, bg: StringVar) -> OvalController:
     return controller
 
 
-def oval_sync_data(canvas: Canvas, figures: list, data: list) -> OvalController:
+def oval_sync_data(canvas: Canvas, figures: list, data: tuple) -> OvalController:
     view = OvalView(canvas=canvas)
     controller = OvalController(
         canvas, figures, get_bg=lambda: "#000000", view=view)

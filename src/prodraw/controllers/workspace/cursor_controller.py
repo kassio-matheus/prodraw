@@ -6,6 +6,14 @@ from prodraw.models.workspace.cursor_model import CursorModel
 from prodraw.views.workspace.cursor_view import CursorView
 from prodraw.controllers.shapes.tools import Tools
 
+# Shapes controllers
+from prodraw.controllers.shapes.rectangle import rectangle_sync_data
+from prodraw.controllers.shapes.oval import oval_sync_data
+from prodraw.controllers.shapes.square import square_sync_data
+from prodraw.controllers.shapes.circle import circle_sync_data
+from prodraw.controllers.shapes.line import line_sync_data
+from prodraw.controllers.shapes.freedraw import freedraw_sync_data
+
 
 @dataclass
 class CursorController(Tools):
@@ -21,6 +29,9 @@ class CursorController(Tools):
     # Dictionary to store the original style of shapes.
     # Using a dict prevents duplicate entries and style overwriting bugs.
     changed_figures: Dict[int, dict] = field(default_factory=dict)
+
+    # List to store copied's shapes
+    copied_figures: List[Tuple[str, int]] = field(default_factory=list)
 
     # Flag to track whether the selected figure was moved (dragged) after the click.
     has_moved: bool = False
@@ -130,11 +141,18 @@ class CursorController(Tools):
                                    for key, value in raw_shape_config.items()}
                 self.changed_figures[shape_id] = old_shape_style
 
-            self.canvas.itemconfig(
-                f"id_{shape_id}", outline="#5B5B5B", dash=(4, 4))
+            shape_type = self.canvas.type(f"id_{shape_id}")
+
+            if (shape_type != "line"):
+                self.canvas.itemconfig(
+                    f"id_{shape_id}", outline="#5B5B5B", dash=(4, 4))
+            else:
+                self.canvas.itemconfig(
+                    f"id_{shape_id}", dash=(6, 6))
         else:
             # Restore the original style and safely remove it from the dictionary using pop()
             shape_style = self.changed_figures.pop(shape_id, None)
+
             if shape_style:
                 self.canvas.itemconfig(f"id_{shape_id}", **shape_style)
 
@@ -191,7 +209,7 @@ class CursorController(Tools):
             elif shape_type == 'Line':
                 _, x0, y0, x1, y1, length, _ = shape
                 self.figures[shape_type][index] = (
-                    current_id, x0, y0, x1, y1, length, bg_color
+                    current_id, x0, y0, x1, y1, length, outline_color
                 )
 
             elif shape_type == 'Circle':
@@ -202,24 +220,94 @@ class CursorController(Tools):
 
             elif shape_type == 'FreeDraw':
                 if isinstance(shape, dict):
-                    self.figures[shape_type][index]['color'] = bg_color
+                    self.figures[shape_type][index]['color'] = outline_color
 
             # 4. Visually update the canvas and synchronize selection cache
             if current_id in self.changed_figures:
                 # If the shape is actively selected, update its cached "original style"
                 # so that deselection restores it to these newly assigned colors.
-                self.changed_figures[current_id]['fill'] = bg_color
-                self.changed_figures[current_id]['outline'] = outline_color
 
                 # Apply fill color immediately (preserves active blue dashed selection border)
-                self.canvas.itemconfig(f"id_{current_id}", fill=bg_color)
+
+                if shape_type != 'Line':
+                    self.changed_figures[current_id]['fill'] = bg_color
+
+                    self.changed_figures[current_id]['outline'] = outline_color
+                    self.canvas.itemconfig(f"id_{current_id}", fill=bg_color)
+                else:
+                    self.changed_figures[current_id]['fill'] = outline_color
+
+                    self.canvas.itemconfig(
+                        f"id_{current_id}", fill=outline_color)
             else:
                 # If the shape is not selected, update both background and border immediately
-                if shape_type == 'Line':
-                    self.canvas.itemconfig(f"id_{current_id}", fill=bg_color)
+
+                if shape_type == 'Line' or shape_type == 'FreeDraw':
+                    self.canvas.itemconfig(
+                        f"id_{current_id}", fill=outline_color)
                 else:
                     self.canvas.itemconfig(
                         f"id_{current_id}", fill=bg_color, outline=outline_color)
+
+    def _copy_shape(self, event: Event):
+        self.copied_figures = self.selected_figures
+
+    def _paste_shape(self, event: Event):
+        # Distance in pixels on paste the duplicated shape
+        distance = 20
+
+        for figure in self.copied_figures:
+            shape_type = figure[0]
+            index = figure[1]
+
+            shape = self.figures[shape_type][index]
+
+            if shape_type == 'Rectangle':
+                shape_id, start_x, start_y, end_x, end_y, distance_x, distance_y, bg = shape
+                duplicated_shape = shape_id + 1, start_x + distance, start_y + \
+                    distance, end_x + distance, end_y + distance, distance_x, distance_y, bg
+
+                rectangle_sync_data(canvas=self.canvas,
+                                    figures=self.figures, data=duplicated_shape)
+
+                self.figures['Rectangle'].append(duplicated_shape)
+
+            elif shape_type == 'Oval':
+                shape_id, start_x, start_y, end_x, end_y, distance_x, distance_y, bg = shape
+                duplicated_shape = shape_id + 1, start_x + distance, start_y + \
+                    distance, end_x + distance, end_y + distance, distance_x, distance_y, bg
+
+                oval_sync_data(canvas=self.canvas,
+                               figures=self.figures, data=duplicated_shape)
+
+                self.figures['Oval'].append(duplicated_shape)
+
+            elif shape_type == 'Square':
+                shape_id, start_x, start_y, end_x, end_y, distance_x, bg = shape
+                duplicated_shape = shape_id + 1, start_x + distance, start_y + \
+                    distance, end_x + distance, end_y + distance, distance_x, bg
+
+                square_sync_data(canvas=self.canvas,
+                                 figures=self.figures, data=duplicated_shape)
+
+                self.figures['Square'].append(duplicated_shape)
+
+            elif shape_type == 'Line':
+                shape_id, start_x, start_y, end_x, end_y, distance_x, bg = shape
+                duplicated_shape = shape_id + 1, start_x + distance, start_y + \
+                    distance, end_x + distance, end_y + distance, distance_x, bg
+
+                line_sync_data(canvas=self.canvas,
+                               figures=self.figures, data=duplicated_shape)
+
+                self.figures['Square'].append(duplicated_shape)
+
+            elif shape_type == 'Circle':
+                _, cx, cy, r, _ = shape
+
+            elif shape_type == 'FreeDraw':
+                if isinstance(shape, dict):
+                    pass
 
     def delete_selected_figures(self, event: Event = None):
         """
@@ -305,8 +393,14 @@ class CursorController(Tools):
             if len(self.selected_figures) > 0 and clicked_figure not in self.selected_figures:
                 for figure in self.selected_figures:
                     shape = self.figures[figure[0]][figure[1]]
-                    self._select_figure_update_style(
-                        shape[0], isSelected=False)
+
+                    if isinstance(shape, dict):
+                        # Waiting implement for FreeDraw
+                        pass
+                    else:
+                        shape_id = shape[0]
+                        self._select_figure_update_style(
+                            shape_id, isSelected=False)
 
                 self.selected_figures = []
                 self.changed_figures.clear()
@@ -330,8 +424,14 @@ class CursorController(Tools):
             if len(self.selected_figures) > 0:
                 for figure in self.selected_figures:
                     shape = self.figures[figure[0]][figure[1]]
-                    self._select_figure_update_style(
-                        shape[0], isSelected=False)
+
+                    if isinstance(shape, dict):
+                        # Waiting implement for FreeDraw
+                        pass
+                    else:
+                        shape_id = shape[0]
+                        self._select_figure_update_style(
+                            shape_id, isSelected=False)
 
             self.selected_figures = []
             self.changed_figures.clear()
@@ -412,3 +512,6 @@ class CursorController(Tools):
     def setup(self):
         self.window.bind("<Delete>", self.delete_selected_figures)
         self.window.bind("<BackSpace>", self.delete_selected_figures)
+
+        self.window.bind("<Control-c>", self._copy_shape)
+        self.window.bind("<Control-v>", self._paste_shape)
