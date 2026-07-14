@@ -72,6 +72,8 @@ class ToolsController:
             bind_fn.figures = self.figures
             bind_fn.get_bg = self.selected_color_var.get
 
+            bind_fn.selected_color_var = self.selected_color_var
+
             bind_fn.setup()
 
         self._on_select(DEFAULT_TOOL)
@@ -90,6 +92,8 @@ class ToolsController:
 
         bind_fn.figures = self.figures
         bind_fn.get_bg = self.selected_color_var.get
+
+        bind_fn.selected_color_var = self.selected_color_var
 
         ShapeController(bind_fn, view_fn)
 

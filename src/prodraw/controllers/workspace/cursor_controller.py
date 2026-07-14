@@ -1,4 +1,4 @@
-from tkinter import Event
+from tkinter import Event, StringVar
 from dataclasses import dataclass, field
 from typing import List, Tuple, Dict, Callable
 
@@ -13,6 +13,26 @@ from prodraw.controllers.shapes.square import square_sync_data
 from prodraw.controllers.shapes.circle import circle_sync_data
 from prodraw.controllers.shapes.line import line_sync_data
 from prodraw.controllers.shapes.freedraw import freedraw_sync_data
+
+# Color mappings
+SHAPE_COLORS = {
+    "#FFFFFF": "#2C3036",
+    "#9398B0": "#2C3036",
+    "#E599F7": "#383442",
+    "#AE3EC9": "#352938",
+    "#4F72FC": "#262E40",
+    "#4DABF7": "#2A3642",
+    "#FFC034": "#3B352B",
+    "#F76710": "#3B2E27",
+    "#0B9268": "#263231",
+    "#40C057": "#293830",
+    "#FF8787": "#3C2B2B",
+    "#E03131": "#382727"
+}
+
+WORKSPACE_COLORS = {
+    "bg": '#101010'
+}
 
 
 @dataclass
@@ -39,6 +59,9 @@ class CursorController(Tools):
     # Keep track of the last mouse position to calculate real-time dx, dy
     last_x: float = 0.0
     last_y: float = 0.0
+
+    # Reference to the selected color StringVar from workspace.py
+    selected_color_var: StringVar = None
 
     def _get_figure_by_model_id(self, target_id_str: str) -> Tuple[str, int]:
         """Find the shape_type and index in the data based on the 'id_...' tag."""
@@ -131,10 +154,12 @@ class CursorController(Tools):
         """
         Updates the style of the figure to indicate selection.
         Ensures the original style is safely stored and restored.
+        Selection is always the inverse of the original style (dotted -> solid, solid -> dotted).
         """
         if isSelected:
+            self._sync_tool_options_to_selected_shape(shape_id)
+
             # Only save the original style if the shape_id is not already in the dictionary.
-            # This prevents saving the "gray dashed" style as the original by mistake.
             if shape_id not in self.changed_figures:
                 raw_shape_config = self.canvas.itemconfig(f"id_{shape_id}")
                 old_shape_style = {key: value[-1]
@@ -143,12 +168,27 @@ class CursorController(Tools):
 
             shape_type = self.canvas.type(f"id_{shape_id}")
 
+            # Detect if the original border was dotted/dashed
+            original_dash = self.changed_figures[shape_id].get("dash", "")
+            is_dotted = False
+            if original_dash:
+                if isinstance(original_dash, (list, tuple)) and len(original_dash) > 0:
+                    is_dotted = True
+                elif isinstance(original_dash, str) and original_dash.strip() not in ("", "0"):
+                    is_dotted = True
+
+            selection_color = "#5B5B5B"
+
             if (shape_type != "line"):
+                # If original is dotted, selection is SOLID. Otherwise selection is DOTTED.
+                target_dash = "" if is_dotted else (4, 4)
                 self.canvas.itemconfig(
-                    f"id_{shape_id}", outline="#5B5B5B", dash=(4, 4))
+                    f"id_{shape_id}", outline=selection_color, dash=target_dash)
             else:
+                # If original is dotted, selection is SOLID. Otherwise selection is DOTTED.
+                target_dash = "" if is_dotted else (6, 6)
                 self.canvas.itemconfig(
-                    f"id_{shape_id}", dash=(6, 6))
+                    f"id_{shape_id}", fill=selection_color, dash=target_dash)
         else:
             # Restore the original style and safely remove it from the dictionary using pop()
             shape_style = self.changed_figures.pop(shape_id, None)
@@ -159,32 +199,35 @@ class CursorController(Tools):
     def change_shape_color(self, bg_color: str, outline_color: str, shape_id: int = None):
         """
         Public method to change both the background (fill) and border (outline) colors of shapes.
-
-        Args:
-            bg_color (str): The new background/fill color.
-            outline_color (str): The new border/outline color.
-            shape_id (int, optional): The unique ID of a specific shape to update.
-                                      If None, all currently selected shapes are updated.
+        Resolves correct high/low contrast styles using SHAPE_COLORS.
         """
-        # 1. Determine which figures to update (targets)
+        # Resolve correct high-contrast border and low-contrast fill colors
+        if outline_color in SHAPE_COLORS:
+            border_color = outline_color
+            fill_color = SHAPE_COLORS[outline_color]
+        elif bg_color in SHAPE_COLORS:
+            border_color = bg_color
+            fill_color = SHAPE_COLORS[bg_color]
+        else:
+            border_color = outline_color
+            fill_color = bg_color
+
+        # 1. Determine target figures to update
         targets = []
         if shape_id is not None:
-            # Target a single, specific shape
             found_info = self._get_figure_by_model_id(str(shape_id))
             if found_info:
                 targets.append(found_info)
         else:
-            # Target all currently selected shapes
             targets = list(self.selected_figures)
 
-        # 2. Iterate and apply color updates to all target shapes
+        # 2. Apply color updates to all targeted shapes
         for shape_type, index in targets:
             try:
                 shape = self.figures[shape_type][index]
             except IndexError:
                 continue
 
-            # Extract the actual ID of the current target shape
             if isinstance(shape, dict):
                 current_id = shape.get('shape_id')
             else:
@@ -193,61 +236,162 @@ class CursorController(Tools):
             if current_id is None:
                 continue
 
-            # 3. Update the internal model
+            # 3. Synchronize internal model using border_color as reference
             if shape_type in ('Rectangle', 'Oval'):
                 _, x0, y0, x1, y1, w, h, _ = shape
                 self.figures[shape_type][index] = (
-                    current_id, x0, y0, x1, y1, w, h, bg_color
+                    current_id, x0, y0, x1, y1, w, h, border_color
                 )
 
             elif shape_type == 'Square':
                 _, x0, y0, x1, y1, size, _ = shape
                 self.figures[shape_type][index] = (
-                    current_id, x0, y0, x1, y1, size, bg_color
+                    current_id, x0, y0, x1, y1, size, border_color
                 )
 
             elif shape_type == 'Line':
                 _, x0, y0, x1, y1, length, _ = shape
                 self.figures[shape_type][index] = (
-                    current_id, x0, y0, x1, y1, length, outline_color
+                    current_id, x0, y0, x1, y1, length, border_color
                 )
 
             elif shape_type == 'Circle':
                 _, cx, cy, r, _ = shape
                 self.figures[shape_type][index] = (
-                    current_id, cx, cy, r, bg_color
+                    current_id, cx, cy, r, border_color
                 )
 
             elif shape_type == 'FreeDraw':
                 if isinstance(shape, dict):
-                    self.figures[shape_type][index]['color'] = outline_color
+                    self.figures[shape_type][index]['color'] = border_color
 
-            # 4. Visually update the canvas and synchronize selection cache
+            # 4. Visually update canvas and selection style cache
             if current_id in self.changed_figures:
-                # If the shape is actively selected, update its cached "original style"
-                # so that deselection restores it to these newly assigned colors.
+                original_style = self.changed_figures[current_id]
 
-                # Apply fill color immediately (preserves active blue dashed selection border)
+                was_filled = original_style.get("fill", "") != ""
+                was_bordered = original_style.get("outline", "") != ""
 
-                if shape_type != 'Line':
-                    self.changed_figures[current_id]['fill'] = bg_color
-
-                    self.changed_figures[current_id]['outline'] = outline_color
-                    self.canvas.itemconfig(f"id_{current_id}", fill=bg_color)
-                else:
-                    self.changed_figures[current_id]['fill'] = outline_color
+                if shape_type != 'Line' and shape_type != 'FreeDraw':
+                    # If shape has solid fill but no border, apply the strong color as fill
+                    if was_filled and not was_bordered:
+                        original_style['fill'] = border_color
+                        original_style['outline'] = ""
+                    else:
+                        original_style['fill'] = fill_color if was_filled else ""
+                        original_style['outline'] = border_color if was_bordered else ""
 
                     self.canvas.itemconfig(
-                        f"id_{current_id}", fill=outline_color)
+                        f"id_{current_id}", fill=original_style['fill'])
+                else:
+                    original_style['fill'] = border_color
+                    self.canvas.itemconfig(
+                        f"id_{current_id}", fill=border_color)
             else:
-                # If the shape is not selected, update both background and border immediately
-
                 if shape_type == 'Line' or shape_type == 'FreeDraw':
                     self.canvas.itemconfig(
-                        f"id_{current_id}", fill=outline_color)
+                        f"id_{current_id}", fill=border_color)
                 else:
+                    has_fill = self.canvas.itemcget(
+                        f"id_{current_id}", "fill") != ""
+                    has_outline = self.canvas.itemcget(
+                        f"id_{current_id}", "outline") != ""
+
+                    # If shape has solid fill but no border, apply the strong color as fill
+                    if has_fill and not has_outline:
+                        target_fill = border_color
+                        target_outline = ""
+                    else:
+                        target_fill = fill_color if has_fill else ""
+                        target_outline = border_color if has_outline else ""
+
+                    if not has_fill and not has_outline:
+                        target_fill = fill_color
+                        target_outline = border_color
+
                     self.canvas.itemconfig(
-                        f"id_{current_id}", fill=bg_color, outline=outline_color)
+                        f"id_{current_id}", fill=target_fill, outline=target_outline)
+
+    def update_shape_style(self, option_id: str, category: str, active_color: str = None):
+        """
+        Updates the style (fill options or border dash) of selected shapes.
+        Synchronizes correct colors based on SHAPE_COLORS.
+        """
+        if not self.selected_figures:
+            return
+
+        # Use passed color or fetch directly from the state variable
+        if active_color:
+            active_border_color = active_color
+        else:
+            active_border_color = self.selected_color_var.get(
+            ) if self.selected_color_var else "#FFFFFF"
+
+        active_fill_color = SHAPE_COLORS.get(active_border_color, "#2C3036")
+
+        for shape_type, index in self.selected_figures:
+            try:
+                shape = self.figures[shape_type][index]
+                if isinstance(shape, dict):
+                    current_id = shape.get('shape_id')
+                else:
+                    current_id = shape[0]
+
+                if current_id is None:
+                    continue
+
+                tk_type = self.canvas.type(f"id_{current_id}")
+
+                if current_id in self.changed_figures:
+                    original_style = self.changed_figures[current_id]
+
+                    if category == "fill" and tk_type != "line":
+                        if option_id == "solid_border":
+                            original_style["fill"] = active_fill_color
+                            original_style["outline"] = active_border_color
+                            # Default normal width
+                            original_style["width"] = 1.5
+                        elif option_id == "solid_no_border":
+                            # Use active border color (strong color) as fill when there's no border
+                            original_style["fill"] = active_border_color
+                            original_style["outline"] = ""
+                            original_style["width"] = 1.5
+                        elif option_id == "no_solid_border":
+                            original_style["fill"] = ""
+                            original_style["outline"] = active_border_color
+                            # Apply a thicker border when there is no background fill
+                            original_style["width"] = 3.5
+
+                        # Update immediate canvas fill and line width
+                        self.canvas.itemconfig(
+                            f"id_{current_id}",
+                            fill=original_style["fill"],
+                            width=original_style["width"]
+                        )
+
+                    elif category == "border":
+                        if option_id == "solid":
+                            original_style["dash"] = ""
+                            if tk_type != "line":
+                                if original_style.get("outline", "") != "":
+                                    original_style["outline"] = active_border_color
+                            else:
+                                original_style["fill"] = active_border_color
+                        elif option_id == "dotted":
+                            original_style["dash"] = (
+                                2, 4) if tk_type != "line" else (4, 4)
+                            if tk_type != "line":
+                                if original_style.get("outline", "") != "":
+                                    original_style["outline"] = active_border_color
+                            else:
+                                original_style["fill"] = active_border_color
+
+                        # Re-trigger selection highlight so selection inverse logic updates correctly
+                        self._select_figure_update_style(
+                            current_id, isSelected=True)
+
+            except IndexError:
+                continue
 
     def _copy_shape(self, event: Event):
         self.copied_figures = self.selected_figures
@@ -357,6 +501,63 @@ class CursorController(Tools):
         self.selected_figures = []
         self.is_selected = False
         self.current = None
+
+    def _sync_tool_options_to_selected_shape(self, current_id: int):
+        """
+        Detects the styling of the selected shape and updates the Tool Options UI
+        to reflect its current configuration (fill, border, and state).
+        """
+        if not hasattr(self, 'tool_options_controller') or not self.tool_options_controller:
+            return
+
+        # 1. Find the shape type to avoid syncing fills for Line elements
+        shape_type = None
+        for s_type, shapes in self.figures.items():
+            for shape in shapes:
+                if isinstance(shape, dict) and shape.get('shape_id') == current_id:
+                    shape_type = s_type
+                    break
+                elif not isinstance(shape, dict) and shape[0] == current_id:
+                    shape_type = s_type
+                    break
+            if shape_type:
+                break
+
+        if shape_type == 'Line':
+            return  # Lines do not have fill configurations
+
+        # 2. Gather style properties from the selection cache or Canvas item
+        if current_id in self.changed_figures:
+            style = self.changed_figures[current_id]
+            fill = style.get("fill", "")
+            outline = style.get("outline", "")
+            dash = style.get("dash", "")
+        else:
+            try:
+                fill = self.canvas.itemcget(f"id_{current_id}", "fill")
+                outline = self.canvas.itemcget(f"id_{current_id}", "outline")
+                dash = self.canvas.itemcget(f"id_{current_id}", "dash")
+            except Exception:
+                return
+
+        # 3. Map values back to ToolOptions configuration IDs
+        fill_option = "solid_border"  # Default fallback
+        if fill != "" and outline != "":
+            fill_option = "solid_border"
+        elif fill != "" and outline == "":
+            fill_option = "solid_no_border"
+        elif fill == "" and outline != "":
+            fill_option = "no_solid_border"
+
+        border_option = "solid"  # Default fallback
+        if dash and dash != "0" and dash != "":
+            border_option = "dotted"
+        else:
+            border_option = "solid"
+
+        # 4. Trigger UI synchronization
+        self.tool_options_controller.sync_ui_from_shape(
+            fill_option, border_option)
 
     def _on_press(self, event: Event):
         """Step 1: Check if the user clicked on a shape or empty space."""

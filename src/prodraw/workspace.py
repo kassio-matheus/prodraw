@@ -12,7 +12,7 @@ from prodraw.controllers.workspace.clear_draws_controller import ClearDrawsContr
 from prodraw.controllers.workspace.tools_controller import ToolsController
 from prodraw.controllers.workspace.zoom_controller import ZoomController
 from prodraw.controllers.workspace.logo_image_controller import LogoImageController
-from prodraw.controllers.workspace.cursor_controller import CursorController
+from prodraw.controllers.workspace.tool_options_controller import ToolOptionsController
 
 # Sync data functions controllers - Load file .pickle
 from prodraw.controllers.shapes.rectangle import rectangle_sync_data
@@ -128,12 +128,21 @@ class Workspace:
         selected_color_var = color_ctrl.setup()
 
         ClearDrawsController(self.canvas, self.figures,
-                            window=self.window, subItemMenu="Arquivo").setup()
+                             window=self.window, subItemMenu="Arquivo").setup()
 
-        toolsbar = ToolsController(self.canvas, selected_color_var, self.figures, window=self.window)
+        toolsbar = ToolsController(
+            self.canvas, selected_color_var, self.figures, window=self.window)
         toolsbar.setup()
 
+        toolsbar.selected_color_var = selected_color_var
+
         color_ctrl.cursor = toolsbar.cursor
+
+        tool_options_ctrl = ToolOptionsController(self.canvas)
+        tool_options_ctrl.setup()
+
+        tool_options_ctrl.cursor = toolsbar.cursor
+        toolsbar.cursor.tool_options_controller = tool_options_ctrl
 
         # Scroll-to-zoom
         zoom_ctrl = ZoomController(self.canvas, window=self.window)
