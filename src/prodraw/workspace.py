@@ -108,7 +108,6 @@ class Workspace:
         self.canvas.pack(fill="both", expand=True)
 
         # Load or save file in menubar -> Waiting for create in MVC
-
         self.window.update_menu(isSubItem=True, subItem="Arquivo",
                                 label="Exportar workspace", command=lambda: self.save_file(self.figures))
 
@@ -130,17 +129,21 @@ class Workspace:
         ClearDrawsController(self.canvas, self.figures,
                              window=self.window, subItemMenu="Arquivo").setup()
 
-        toolsbar = ToolsController(
-            self.canvas, selected_color_var, self.figures, window=self.window)
-        toolsbar.setup()
-
-        toolsbar.selected_color_var = selected_color_var
-
-        color_ctrl.cursor = toolsbar.cursor
-
         tool_options_ctrl = ToolOptionsController(self.canvas)
         tool_options_ctrl.setup()
 
+        toolsbar = ToolsController(
+            self.canvas, selected_color_var, self.figures, window=self.window)
+
+        toolsbar.selected_color_var = selected_color_var
+        toolsbar.tool_options_model = tool_options_ctrl.model
+        toolsbar.tool_options_controller = tool_options_ctrl
+        toolsbar.tool_options_controller.on_option_change_callback = toolsbar.cursor.update_shape_style
+
+        toolsbar.setup()
+
+        # CROSS-REFERENCES
+        color_ctrl.cursor = toolsbar.cursor
         tool_options_ctrl.cursor = toolsbar.cursor
         toolsbar.cursor.tool_options_controller = tool_options_ctrl
 

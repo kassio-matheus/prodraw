@@ -312,22 +312,55 @@ class CursorController(Tools):
                     self.canvas.itemconfig(
                         f"id_{current_id}", fill=target_fill, outline=target_outline)
 
+    def update_tool_options_state(self):
+        """Updates the Tool Options panel state based on the current selection list."""
+        if not hasattr(self, 'tool_options_controller') or not self.tool_options_controller:
+            return
+
+        # If nothing is selected, reactivate the panel with default model options
+        if not self.selected_figures:
+            current_fill = self.tool_options_controller.model.get_fill()
+            current_border = self.tool_options_controller.model.get_border()
+            self.tool_options_controller.sync_ui_from_shape(
+                current_fill, current_border, is_disabled=False)
+            # self.update_tool_options_state()
+
+            return
+
+        # Synchronize based on the last selected shape in list
+        last_shape_type, last_index = self.selected_figures[-1]
+        try:
+            shape = self.figures[last_shape_type][last_index]
+            if isinstance(shape, dict):
+                current_id = shape.get('shape_id')
+            else:
+                current_id = shape[0]
+
+            if current_id is not None:
+                self._sync_tool_options_to_selected_shape(current_id)
+        except IndexError:
+            pass
+
     def update_shape_style(self, option_id: str, category: str, active_color: str = None):
         """
         Updates the style (fill options or border dash) of selected shapes.
-        Synchronizes correct colors based on SHAPE_COLORS.
         """
         if not self.selected_figures:
             return
 
-        # Use passed color or fetch directly from the state variable
         if active_color:
             active_border_color = active_color
         else:
-            active_border_color = self.selected_color_var.get(
-            ) if self.selected_color_var else "#FFFFFF"
+            # Fallback to white if no color var is found
+            active_border_color = self.selected_color_var.get() if hasattr(
+                self, 'selected_color_var') and self.selected_color_var else "#FFFFFF"
 
-        active_fill_color = SHAPE_COLORS.get(active_border_color, "#2C3036")
+        # Try to fetch the contrasting fill color
+        try:
+            active_fill_color = SHAPE_COLORS.get(
+                active_border_color, "#2C3036")
+        except NameError:
+            active_fill_color = "#2C3036"  # Fallback neutral dark gray
 
         for shape_type, index in self.selected_figures:
             try:
@@ -349,46 +382,55 @@ class CursorController(Tools):
                         if option_id == "solid_border":
                             original_style["fill"] = active_fill_color
                             original_style["outline"] = active_border_color
-                            # Default normal width
                             original_style["width"] = 1.5
                         elif option_id == "solid_no_border":
-                            # Use active border color (strong color) as fill when there's no border
                             original_style["fill"] = active_border_color
                             original_style["outline"] = ""
                             original_style["width"] = 1.5
                         elif option_id == "no_solid_border":
                             original_style["fill"] = ""
                             original_style["outline"] = active_border_color
-                            # Apply a thicker border when there is no background fill
                             original_style["width"] = 3.5
 
-                        # Update immediate canvas fill and line width
                         self.canvas.itemconfig(
                             f"id_{current_id}",
                             fill=original_style["fill"],
-                            width=original_style["width"]
+                            width=original_style["width"],
+                            outline=original_style["outline"]
                         )
 
                     elif category == "border":
                         if option_id == "solid":
                             original_style["dash"] = ""
                             if tk_type != "line":
-                                if original_style.get("outline", "") != "":
-                                    original_style["outline"] = active_border_color
-                            else:
-                                original_style["fill"] = active_border_color
-                        elif option_id == "dotted":
-                            original_style["dash"] = (
-                                2, 4) if tk_type != "line" else (4, 4)
-                            if tk_type != "line":
-                                if original_style.get("outline", "") != "":
+                                if original_style.get("outline", "") == "":
                                     original_style["outline"] = active_border_color
                             else:
                                 original_style["fill"] = active_border_color
 
-                        # Re-trigger selection highlight so selection inverse logic updates correctly
-                        self._select_figure_update_style(
-                            current_id, isSelected=True)
+                        elif option_id == "dotted":
+                            original_style["dash"] = (6, 6)
+
+                            if tk_type != "line":
+                                if original_style.get("outline", "") == "":
+                                    original_style["outline"] = active_border_color
+                            else:
+                                original_style["fill"] = active_border_color
+
+                        if tk_type != "line":
+                            self.canvas.itemconfig(
+                                f"id_{current_id}",
+                                dash=original_style["dash"],
+                                outline=original_style.get(
+                                    "outline", active_border_color)
+                            )
+                        else:
+                            self.canvas.itemconfig(
+                                f"id_{current_id}",
+                                dash=original_style["dash"],
+                                fill=original_style.get(
+                                    "fill", active_border_color)
+                            )
 
             except IndexError:
                 continue
@@ -499,18 +541,19 @@ class CursorController(Tools):
 
         # 3. Reset selection states
         self.selected_figures = []
+        self.update_tool_options_state()
         self.is_selected = False
         self.current = None
 
     def _sync_tool_options_to_selected_shape(self, current_id: int):
         """
-        Detects the styling of the selected shape and updates the Tool Options UI
+        Detects the styling of the selected shape and updates the Tool Options UI 
         to reflect its current configuration (fill, border, and state).
         """
         if not hasattr(self, 'tool_options_controller') or not self.tool_options_controller:
             return
 
-        # 1. Find the shape type to avoid syncing fills for Line elements
+        # 1. Find the shape type to check if it's a Line or FreeDraw
         shape_type = None
         for s_type, shapes in self.figures.items():
             for shape in shapes:
@@ -523,8 +566,11 @@ class CursorController(Tools):
             if shape_type:
                 break
 
-        if shape_type == 'Line':
-            return  # Lines do not have fill configurations
+        # --- BLOCK ENTIRE PANEL IF LINE OR FREEDRAW ---
+        if shape_type in ('Line', 'FreeDraw'):
+            self.tool_options_controller.sync_ui_from_shape(
+                "", "", is_disabled=True)
+            return
 
         # 2. Gather style properties from the selection cache or Canvas item
         if current_id in self.changed_figures:
@@ -555,9 +601,9 @@ class CursorController(Tools):
         else:
             border_option = "solid"
 
-        # 4. Trigger UI synchronization
+        # 4. Trigger UI synchronization (reenables the panel)
         self.tool_options_controller.sync_ui_from_shape(
-            fill_option, border_option)
+            fill_option, border_option, is_disabled=False)
 
     def _on_press(self, event: Event):
         """Step 1: Check if the user clicked on a shape or empty space."""
@@ -604,6 +650,7 @@ class CursorController(Tools):
                             shape_id, isSelected=False)
 
                 self.selected_figures = []
+                self.update_tool_options_state()
                 self.changed_figures.clear()
 
             shape = self.figures[clicked_figure[0]][clicked_figure[1]]
@@ -618,6 +665,7 @@ class CursorController(Tools):
                 self.selected_figures = [clicked_figure]
 
             self.is_selected = True
+            self.update_tool_options_state()
             self.current = None
 
         else:
@@ -635,6 +683,7 @@ class CursorController(Tools):
                             shape_id, isSelected=False)
 
             self.selected_figures = []
+            self.update_tool_options_state()
             self.changed_figures.clear()
             self.is_selected = False
             self.current = CursorModel()
@@ -705,6 +754,7 @@ class CursorController(Tools):
                                 shape[0], isSelected=False)
 
                 self.selected_figures = []
+                self.update_tool_options_state()
                 self.changed_figures.clear()
                 self.is_selected = False
 

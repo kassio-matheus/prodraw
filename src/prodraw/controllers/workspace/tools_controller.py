@@ -72,6 +72,9 @@ class ToolsController:
             bind_fn.figures = self.figures
             bind_fn.get_bg = self.selected_color_var.get
 
+            bind_fn.tool_options_model = getattr(
+                self, 'tool_options_model', None)
+
             bind_fn.selected_color_var = self.selected_color_var
 
             bind_fn.setup()
@@ -95,7 +98,16 @@ class ToolsController:
 
         bind_fn.selected_color_var = self.selected_color_var
 
+        bind_fn.tool_options_model = getattr(self, 'tool_options_model', None)
+
         ShapeController(bind_fn, view_fn)
 
         if (tool_key == "cursor"):
             self._cursor = bind_fn
+
+        tool_options_ctrl = getattr(self, 'tool_options_controller', None)
+        if tool_options_ctrl:
+            if tool_key in ('line', 'freedraw', 'cursor'):
+                tool_options_ctrl.disable_options()
+            else:
+                tool_options_ctrl.enable_options()

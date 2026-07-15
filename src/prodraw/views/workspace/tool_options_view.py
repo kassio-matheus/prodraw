@@ -13,49 +13,38 @@ class ToolOptionsView:
         self.model = model
         # Creates the main panel container with padding
         self.panel = Frame(canvas, bg=PANEL_BG, padx=31, pady=12)
-        
-        # Dictionary to store border canvas references and their commands
-        self.border_buttons = {}
+        self.buttons = {}
 
     def build(self, on_fill_click, on_border_click, on_size_click) -> None:
-        """
-        Builds the grid of options and positions the panel on the screen.
-        It calculates the position right below the Color Picker.
-        """
-        # Row 0: Fill Options
+        # (Sua lógica de build permanece idêntica)
         for col, fill_type in enumerate(self.model.fills):
             self._create_button(0, col, fill_type, "fill", on_fill_click)
 
-        # Row 1: Border Options
         for col, border_type in enumerate(self.model.borders):
             self._create_button(1, col, border_type, "border", on_border_click)
 
-        # Places the panel below the Color Picker (y=170 accommodates the Color Picker height)
         self.panel.place(relx=1.0, x=-16, y=170, anchor="ne")
 
     def _create_button(self, row: int, col: int, option_id: str, category: str, command) -> None:
-        """
-        Creates a single square button and draws the corresponding icon inside it.
-        """
+        """Creates a single square button and draws the corresponding icon inside it."""
         btn_canvas = Canvas(self.panel, width=BUTTON_SIZE, height=BUTTON_SIZE,
                             bg=PANEL_BG, highlightthickness=0, cursor="hand2")
         btn_canvas.grid(row=row, column=col, padx=4, pady=4)
 
-        # Draw the respective icon based on category and option_id
         self._draw_icon(btn_canvas, option_id, category)
 
-        # Bind the click event
-        btn_canvas.bind("<Button-1>", lambda event, opt=option_id, cmd=command: cmd(opt))
+        # Bind click action
+        btn_canvas.bind("<Button-1>", lambda event,
+                        opt=option_id, cmd=command: cmd(opt))
 
-        # Store the canvas reference in the model for highlighting
         self.model.canvas_by_option[option_id] = btn_canvas
 
-        # --- FIX: Store border buttons to easily disable them later ---
-        if category == "border":
-            self.border_buttons[option_id] = {
-                "canvas": btn_canvas,
-                "command": command
-            }
+        # --- UPDATE: Track all buttons for general state control ---
+        self.buttons[option_id] = {
+            "canvas": btn_canvas,
+            "category": category,
+            "command": command
+        }
 
     def _draw_icon(self, canvas: Canvas, option_id: str, category: str) -> None:
         """Draws the geometric representation of the tool inside the button."""
@@ -97,31 +86,63 @@ class ToolOptionsView:
         if option_id in self.model.canvas_by_option:
             self.model.canvas_by_option[option_id].config(bg=PANEL_BG)
 
-    def set_border_buttons_state(self, state: str):
-        """Enables or disables the border style buttons visually and behaviorally."""
-        if not hasattr(self, 'border_buttons') or not self.border_buttons:
+
+    def set_panel_state(self, state: str):
+        """Desativa ou ativa visualmente todos os botões e os seus comportamentos."""
+        if not hasattr(self, 'buttons') or not self.buttons:
             return
 
-        # Dim the icon color to dark gray when disabled, white when normal
-        color = "#3a3a40" if state == "disabled" else "#ffffff"
+        outline_color = "#3a3a40" if state == "disabled" else "#ffffff"
         cursor = "arrow" if state == "disabled" else "hand2"
 
-        for option_id, btn_data in self.border_buttons.items():
+        for option_id, btn_data in self.buttons.items():
             btn = btn_data["canvas"]
             cmd = btn_data["command"]
 
             try:
-                # 1. Update visual feedback (dim the icon and change cursor)
                 btn.config(cursor=cursor)
-                btn.itemconfig("icon", outline=color)
+                btn.itemconfig("icon", outline=outline_color)
 
-                # 2. Update behavior (prevent or allow clicks)
                 if state == "disabled":
                     btn.unbind("<Button-1>")
-                    # Automatically remove highlight if it was previously selected
-                    self.unhighlight(option_id) 
+                    self.unhighlight(option_id)
+
+                    # Escurece o preenchimento interno do ícone
+                    if btn.itemcget("icon", "fill") != "":
+                        btn.itemconfig("icon", fill="#2a2a30")
                 else:
-                    # Rebind the click event
+                    # Restaura o cinza neutro nativo dos botões ativos correspondentes
+                    if btn_data["category"] == "fill" and option_id in ("solid_border", "solid_no_border"):
+                        btn.itemconfig("icon", fill="#5c5c66")
+
+                    btn.bind("<Button-1>", lambda event,
+                             opt=option_id, c=cmd: c(opt))
+            except Exception as e:
+                print(f"Error setting state on button '{option_id}': {e}")
+
+    def set_border_buttons_state(self, state: str):
+        """Desativa ou ativa especificamente os seletores de estilo de borda."""
+        if not hasattr(self, 'buttons') or not self.buttons:
+            return
+
+        outline_color = "#3a3a40" if state == "disabled" else "#ffffff"
+        cursor = "arrow" if state == "disabled" else "hand2"
+
+        for option_id, btn_data in self.buttons.items():
+            if btn_data["category"] != "border":
+                continue
+
+            btn = btn_data["canvas"]
+            cmd = btn_data["command"]
+
+            try:
+                btn.config(cursor=cursor)
+                btn.itemconfig("icon", outline=outline_color)
+
+                if state == "disabled":
+                    btn.unbind("<Button-1>")
+                    self.unhighlight(option_id)
+                else:
                     btn.bind("<Button-1>", lambda event, opt=option_id, c=cmd: c(opt))
             except Exception as e:
                 print(f"Error setting state on border button '{option_id}': {e}")
