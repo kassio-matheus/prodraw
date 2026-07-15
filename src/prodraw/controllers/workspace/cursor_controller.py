@@ -1,6 +1,8 @@
 from tkinter import Event, StringVar
 from dataclasses import dataclass, field
 from typing import List, Tuple, Dict, Callable
+import random
+
 
 from prodraw.models.workspace.cursor_model import CursorModel
 from prodraw.views.workspace.cursor_view import CursorView
@@ -440,7 +442,7 @@ class CursorController(Tools):
 
     def paste_shapes(self, event: Event = None):
         # Distance in pixels on paste the duplicated shape
-        distance = 20
+        distance = random.randint(20, 50)
 
         for figure in self.copied_figures:
             shape_type = figure[0]
@@ -450,7 +452,7 @@ class CursorController(Tools):
 
             if shape_type == 'Rectangle':
                 shape_id, start_x, start_y, end_x, end_y, distance_x, distance_y, bg = shape
-                duplicated_shape = shape_id + 1, start_x + distance, start_y + \
+                duplicated_shape = random.randint(1, 10000000), start_x + distance, start_y + \
                     distance, end_x + distance, end_y + distance, distance_x, distance_y, bg
 
                 rectangle_sync_data(canvas=self.canvas,
@@ -460,7 +462,7 @@ class CursorController(Tools):
 
             elif shape_type == 'Oval':
                 shape_id, start_x, start_y, end_x, end_y, distance_x, distance_y, bg = shape
-                duplicated_shape = shape_id + 1, start_x + distance, start_y + \
+                duplicated_shape = random.randint(1, 10000000), start_x + distance, start_y + \
                     distance, end_x + distance, end_y + distance, distance_x, distance_y, bg
 
                 oval_sync_data(canvas=self.canvas,
@@ -470,7 +472,7 @@ class CursorController(Tools):
 
             elif shape_type == 'Square':
                 shape_id, start_x, start_y, end_x, end_y, distance_x, bg = shape
-                duplicated_shape = shape_id + 1, start_x + distance, start_y + \
+                duplicated_shape = random.randint(1, 10000000), start_x + distance, start_y + \
                     distance, end_x + distance, end_y + distance, distance_x, bg
 
                 square_sync_data(canvas=self.canvas,
@@ -480,16 +482,23 @@ class CursorController(Tools):
 
             elif shape_type == 'Line':
                 shape_id, start_x, start_y, end_x, end_y, distance_x, bg = shape
-                duplicated_shape = shape_id + 1, start_x + distance, start_y + \
+                duplicated_shape = random.randint(1, 10000000), start_x + distance, start_y + \
                     distance, end_x + distance, end_y + distance, distance_x, bg
 
                 line_sync_data(canvas=self.canvas,
                                figures=self.figures, data=duplicated_shape)
 
-                self.figures['Square'].append(duplicated_shape)
+                self.figures['Line'].append(duplicated_shape)
 
             elif shape_type == 'Circle':
-                _, cx, cy, r, _ = shape
+                shape_id, x, y, radius, bg = shape
+                duplicated_shape = random.randint(1, 10000000), x + distance, y + \
+                    distance, radius, bg
+
+                circle_sync_data(canvas=self.canvas,
+                                 figures=self.figures, data=duplicated_shape)
+
+                self.figures['Circle'].append(duplicated_shape)
 
             elif shape_type == 'FreeDraw':
                 if isinstance(shape, dict):
