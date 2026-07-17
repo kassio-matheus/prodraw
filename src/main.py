@@ -6,7 +6,7 @@ from prodraw.workspace import Workspace
 def main():
     window = create_window(title="ProDraw", is_fullscreen=True,
                            icon="public/icons/logo_icon.png")
-    version = Version("1.0.0")
+    version = Version("1.0.5")
 
     Workspace(root=window.view.root, version=version, window=window).start()
 
