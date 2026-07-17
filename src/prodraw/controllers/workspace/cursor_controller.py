@@ -1,8 +1,7 @@
 from tkinter import Event, StringVar
 from dataclasses import dataclass, field
-from typing import List, Tuple, Dict, Callable
+from typing import List, Tuple, Dict
 import random
-
 
 from prodraw.models.workspace.cursor_model import CursorModel
 from prodraw.views.workspace.cursor_view import CursorView
@@ -20,25 +19,7 @@ from prodraw.controllers.shapes.freedraw import freedraw_sync_data
 # workspace" menu action (see ClearDrawsController)
 from prodraw.controllers.workspace.draws_controller import DrawsController
 
-# Color mappings
-SHAPE_COLORS = {
-    "#FFFFFF": "#2C3036",
-    "#9398B0": "#2C3036",
-    "#E599F7": "#383442",
-    "#AE3EC9": "#352938",
-    "#4F72FC": "#262E40",
-    "#4DABF7": "#2A3642",
-    "#FFC034": "#3B352B",
-    "#F76710": "#3B2E27",
-    "#0B9268": "#263231",
-    "#40C057": "#293830",
-    "#FF8787": "#3C2B2B",
-    "#E03131": "#382727"
-}
-
-WORKSPACE_COLORS = {
-    "bg": '#101010'
-}
+from prodraw.config import SHAPE_COLORS, WORKSPACE_COLORS
 
 
 @dataclass
@@ -552,11 +533,10 @@ class CursorController(Tools):
 
             elif shape_type == 'FreeDraw':
                 duplicated_shape = shape
-                duplicated_shape['shape_id']+=1
+                duplicated_shape['shape_id'] += 1
                 freedraw_sync_data(canvas=self.canvas,
-                                 figures=self.figures, data=duplicated_shape)
+                                   figures=self.figures, data=duplicated_shape)
                 self.figures['FreeDraw'].append(duplicated_shape)
-
 
     def delete_selected_figures(self, event: Event = None):
         """
@@ -790,8 +770,9 @@ class CursorController(Tools):
 
                     if isinstance(shape, dict):
                         shape_id = shape['shape_id']
-                        self._select_figure_update_style(shape_id, isSelected=False)
-                        
+                        self._select_figure_update_style(
+                            shape_id, isSelected=False)
+
                     else:
                         shape_id = shape[0]
                         self._select_figure_update_style(
@@ -804,8 +785,8 @@ class CursorController(Tools):
             shape = self.figures[clicked_figure[0]][clicked_figure[1]]
 
             if isinstance(shape, dict):
-                    shape_id = shape['shape_id']
-                    self._select_figure_update_style(shape_id, isSelected=True)
+                shape_id = shape['shape_id']
+                self._select_figure_update_style(shape_id, isSelected=True)
             else:
                 self._select_figure_update_style(shape[0], isSelected=True)
 
@@ -826,7 +807,8 @@ class CursorController(Tools):
 
                     if isinstance(shape, dict):
                         shape_id = shape['shape_id']
-                        self._select_figure_update_style(shape_id, isSelected=False)
+                        self._select_figure_update_style(
+                            shape_id, isSelected=False)
                     else:
                         shape_id = shape[0]
                         self._select_figure_update_style(
@@ -889,7 +871,8 @@ class CursorController(Tools):
                     if isinstance(shape, dict):
                         shape_id = shape['shape_id']
                         if shape_id is not None:
-                            self._select_figure_update_style(shape_id, isSelected=True)
+                            self._select_figure_update_style(
+                                shape_id, isSelected=True)
                     else:
                         if shape[0] is not None:
                             self._select_figure_update_style(
@@ -904,7 +887,8 @@ class CursorController(Tools):
                     shape = self.figures[figure[0]][figure[1]]
                     if isinstance(shape, dict):
                         shape_id = shape['shape_id']
-                        self._select_figure_update_style(shape_id, isSelected=False)
+                        self._select_figure_update_style(
+                            shape_id, isSelected=False)
                     else:
                         if shape[0] is not None:
                             self._select_figure_update_style(
