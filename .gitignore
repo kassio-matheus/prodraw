@@ -228,3 +228,8 @@ __marimo__/
 #Tkinter
 .window_state.json
 .pickle
+.prodraw
+
+#Others
+CODE_OF_CONDUCT.md
+.github/
